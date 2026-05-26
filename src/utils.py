@@ -35,7 +35,7 @@ CONSTRUCTORS_2026 = {
     "Red Bull": {"pace_offset": -0.15, "color": "#3671C6"},      # Red Bull blue
     "Williams": {"pace_offset": -0.10, "color": "#005AFF"},      # Williams royal blue
     "Haas": {"pace_offset": 0.05, "color": "#D9D9D9"},           # Haas grey
-    "Audi": {"pace_offset": 0.15, "color": "#A6F400"},           # Audi lime/neon green
+    "Audi": {"pace_offset": 0.15, "color": "#FF1A00"},           # Audi Lava Red
     "VCARB": {"pace_offset": 0.25, "color": "#1045E2"},          # VCARB blue
     "Aston Martin": {"pace_offset": 0.35, "color": "#00594F"},   # Aston Martin racing green
     "Cadillac": {"pace_offset": 0.45, "color": "#999999"},       # Cadillac silver/gray
