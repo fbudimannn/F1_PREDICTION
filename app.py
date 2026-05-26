@@ -619,8 +619,26 @@ with tab_race:
     # Probability breakdown table
     st.markdown("#### Full Probability Breakdown Table")
     
+    # Color team and driver code cells with their constructor palette
+    def style_team_column(row):
+        color = get_driver_color(row["driver_code"])
+        hex_str = color.lstrip('#')
+        r = int(hex_str[0:2], 16)
+        g = int(hex_str[2:4], 16)
+        b = int(hex_str[4:6], 16)
+        brightness = (r * 299 + g * 587 + b * 114) / 1000
+        text_color = "#0d0f12" if brightness > 150 else "#f0f3f6"
+        
+        styles = [''] * len(row)
+        cols = list(row.index)
+        if "driver_code" in cols:
+            styles[cols.index("driver_code")] = f"background-color: {color}; color: {text_color}; font-weight: bold;"
+        if "team" in cols:
+            styles[cols.index("team")] = f"background-color: {color}; color: {text_color}; font-weight: bold;"
+        return styles
+
     st.dataframe(
-        df_sim_sorted[["driver_code", "driver_name", "team", "win_probability", "podium_probability", "top10_probability", "dnf_probability"]],
+        df_sim_sorted[["driver_code", "driver_name", "team", "win_probability", "podium_probability", "top10_probability", "dnf_probability"]].style.apply(style_team_column, axis=1),
         column_config={
             "driver_code": st.column_config.TextColumn("Code"),
             "driver_name": st.column_config.TextColumn("Driver Name"),
