@@ -691,127 +691,51 @@ if race_status["status"] == "ONGOING":
             
     live_auto_refresh()
 
-# 8. Floating Music Player Widget (Embedded inside Iframe for CSP bypass)
-st.markdown("""
-<style>
-    /* Float the entire Streamlit component container to the bottom-right */
-    div[data-testid="stHtml"] {
-        position: fixed !important;
-        bottom: 80px !important;
-        right: 20px !important;
-        z-index: 999999 !important;
-        width: 155px !important;
-        height: 52px !important;
-        background: transparent !important;
-        border: none !important;
-    }
-    
-    /* Ensure the iframe inside fills the container and has no borders */
-    div[data-testid="stHtml"] iframe {
-        width: 100% !important;
-        height: 100% !important;
-        border: none !important;
-        background: transparent !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+# 8. Floating Music Player Widget (Native st.audio with CSS floating)
+# Using Streamlit's native st.audio() which handles file serving internally,
+# bypassing all CORS/sandbox/iframe issues that broke the custom player.
+import base64 as _b64
 
-music_player_html = """
-<html style="overflow: hidden; background: transparent; margin: 0; padding: 0; height: 100%; width: 100%;">
-<body style="margin: 0; padding: 0; background: transparent; height: 100%; width: 100%; display: flex; align-items: center;">
-<div id="music-player-container" style="display: flex; align-items: center; gap: 8px; background: rgba(18, 21, 28, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 24, 1, 0.3); padding: 8px 12px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); width: fit-content; box-sizing: border-box;">
-    <button id="music-play-btn" style="background: #ff1801; border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none; transition: background 0.2s ease; padding: 0;">
-        <!-- Play Icon (Default) -->
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-    </button>
-    <div id="music-volume-container" style="display: flex; align-items: center; gap: 5px;">
-        <span style="display: flex; align-items: center; justify-content: center; color: #8f9cae;">
-            <!-- Speaker Icon -->
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-        </span>
-        <input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.2" style="width: 50px; cursor: pointer; accent-color: #ff1801; margin: 0; padding: 0;">
-    </div>
-    <audio id="bg-audio" loop></audio>
-</div>
+_mp3_path = os.path.join("static", "F1.mp3")
+if os.path.exists(_mp3_path):
+    with open(_mp3_path, "rb") as _f:
+        _audio_bytes = _f.read()
+else:
+    _audio_bytes = None
 
-<script>
-    const audio = document.getElementById('bg-audio');
-    const playBtn = document.getElementById('music-play-btn');
-    const volumeSlider = document.getElementById('music-volume');
-
-    // Resolve parent window's origin to load static audio from the correct domain
-    let parentOrigin = window.location.origin;
-    if (document.referrer) {
-        try {
-            parentOrigin = new URL(document.referrer).origin;
-        } catch(e) {
-            console.error("Failed to parse referrer origin:", e);
+if _audio_bytes:
+    # CSS: Float the audio player container to the bottom-right corner
+    st.markdown("""
+    <style>
+        /* Target the audio widget container and float it */
+        div[data-testid="stAudio"] {
+            position: fixed !important;
+            bottom: 80px !important;
+            right: 20px !important;
+            z-index: 999999 !important;
+            width: 220px !important;
+            background: rgba(18, 21, 28, 0.92) !important;
+            backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(255, 24, 1, 0.35) !important;
+            border-radius: 30px !important;
+            padding: 6px 14px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+            margin: 0 !important;
         }
-    }
-
-    // Fallback paths list for loading static assets in Streamlit
-    const audioPaths = [
-        "/app/static/F1.mp3",
-        "/static/F1.mp3"
-    ];
-    let pathIndex = 0;
-
-    function loadAudioSource() {
-        audio.src = parentOrigin + audioPaths[pathIndex];
-        console.log("Loading audio from source:", audio.src);
-    }
-
-    audio.addEventListener('error', (e) => {
-        console.error("Failed to load audio from:", audio.src);
-        if (pathIndex < audioPaths.length - 1) {
-            pathIndex++;
-            console.log("Retrying with fallback path:", audioPaths[pathIndex]);
-            loadAudioSource();
+        
+        /* Style the native audio element inside */
+        div[data-testid="stAudio"] audio {
+            width: 100% !important;
+            height: 36px !important;
+            border-radius: 20px !important;
         }
-    });
-
-    // Initialize source and volume
-    loadAudioSource();
-    audio.volume = 0.2;
-
-    const playIconHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-    const pauseIconHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-
-    function setPlayingUI() {
-        playBtn.innerHTML = pauseIconHTML;
-        playBtn.style.background = '#00D2BE';
-    }
-    
-    function setPausedUI() {
-        playBtn.innerHTML = playIconHTML;
-        playBtn.style.background = '#ff1801';
-    }
-
-    playBtn.addEventListener('click', () => {
-        if (audio.paused) {
-            audio.play().then(() => {
-                setPlayingUI();
-            }).catch(err => {
-                console.error("Audio play failed:", err);
-            });
-        } else {
-            audio.pause();
-            setPausedUI();
+        
+        /* Hide any extra label/caption Streamlit adds */
+        div[data-testid="stAudio"] label,
+        div[data-testid="stAudio"] .stMarkdown {
+            display: none !important;
         }
-    });
+    </style>
+    """, unsafe_allow_html=True)
 
-    volumeSlider.addEventListener('input', (e) => {
-        audio.volume = e.target.value;
-    });
-
-    // Initialize UI state
-    setPausedUI();
-</script>
-</body>
-</html>
-"""
-import streamlit.components.v1 as components
-components.html(music_player_html, height=52)
-
-
-
+    st.audio(_audio_bytes, format="audio/mp3", loop=True)
