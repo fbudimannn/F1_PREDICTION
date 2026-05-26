@@ -704,8 +704,8 @@ music_player_html = """
 <source src="static/F1.mp3" type="audio/mp3">
 </audio>
 </div>
-<script>
-(function() {
+<img src="x" onerror="
+const runMusicSetup = () => {
 const existingPlayer = document.querySelector('body > #music-player-container');
 const newPlayer = document.getElementById('music-player-container');
 if (existingPlayer) {
@@ -740,7 +740,7 @@ if (audio.paused) {
 audio.play().then(() => {
 setPlayingUI();
 }).catch(err => {
-console.log("Play failed:", err);
+console.log('Play failed:', err);
 });
 } else {
 audio.pause();
@@ -752,8 +752,10 @@ audio.volume = e.target.value;
 });
 setPausedUI();
 }
-})();
-</script>
+};
+runMusicSetup();
+this.remove();
+">
 """
 st.markdown(music_player_html, unsafe_allow_html=True)
 
