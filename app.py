@@ -585,29 +585,24 @@ with tab_race:
     st.markdown("#### Predicted Race Finish Probability (Top 10)")
     
     # Plotly probability bar chart using beautiful full driver names
-    top10_drivers = df_sim_sorted["driver_code"][:10]
-    win_colors = [hex_to_rgba(get_driver_color(code), 1.0) for code in top10_drivers]
-    podium_colors = [hex_to_rgba(get_driver_color(code), 0.65) for code in top10_drivers]
-    top10_colors = [hex_to_rgba(get_driver_color(code), 0.3) for code in top10_drivers]
-
     fig_bar = go.Figure()
     fig_bar.add_trace(go.Bar(
         x=df_sim_sorted["driver_name"][:10],
         y=df_sim_sorted["win_probability"][:10],
         name="Win Chance %",
-        marker_color=win_colors
+        marker_color='#ff1801'
     ))
     fig_bar.add_trace(go.Bar(
         x=df_sim_sorted["driver_name"][:10],
         y=df_sim_sorted["podium_probability"][:10],
         name="Podium Chance %",
-        marker_color=podium_colors
+        marker_color='#00e5ff'
     ))
     fig_bar.add_trace(go.Bar(
         x=df_sim_sorted["driver_name"][:10],
         y=df_sim_sorted["top10_probability"][:10],
         name="Top 10 Chance %",
-        marker_color=top10_colors
+        marker_color='#8f9cae'
     ))
     
     fig_bar.update_layout(
@@ -623,8 +618,26 @@ with tab_race:
     
     # Probability breakdown table
     st.markdown("#### Full Probability Breakdown Table")
+    
+    # Format table with premium team heart emojis
+    df_display = df_sim_sorted.copy()
+    team_emojis = {
+        "Mercedes": "🩵",
+        "McLaren": "🧡",
+        "Ferrari": "❤️",
+        "Red Bull": "💙",
+        "Williams": "💙",
+        "Haas": "🤍",
+        "Audi": "❤️",
+        "VCARB": "💙",
+        "Aston Martin": "💚",
+        "Cadillac": "🩶",
+        "Alpine": "💙"
+    }
+    df_display["team"] = df_display["team"].apply(lambda t: f"{team_emojis.get(t, '🏁')} {t}")
+    
     st.dataframe(
-        df_sim_sorted[["driver_code", "driver_name", "team", "win_probability", "podium_probability", "top10_probability", "dnf_probability"]],
+        df_display[["driver_code", "driver_name", "team", "win_probability", "podium_probability", "top10_probability", "dnf_probability"]],
         use_container_width=True,
         hide_index=True
     )
