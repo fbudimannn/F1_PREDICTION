@@ -4,37 +4,37 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-red.svg)](https://www.python.org/)
 [![FastF1](https://img.shields.io/badge/API-FastF1-orange.svg)](https://github.com/theOehrly/FastF1)
 
-Platform analitik prediktif canggih untuk mensimulasikan kualifikasi dan balapan utama Formula 1 secara real-time pada era regulasi mesin & sasis baru 2026. Platform ini menggabungkan model pembelajaran mesin (*Learning-To-Rank*), pembaruan performa Bayesian ELO dinamis, dan simulator fisik *NumPy-Vectorized Monte Carlo* 10.000+ iterasi.
+An advanced predictive analytics platform for simulating Formula 1 qualifying and race events in real-time under the all-new 2026 engine & chassis regulations. It combines a Machine Learning *Learning-To-Rank* model, dynamic Bayesian ELO performance updates, and a NumPy-vectorized Monte Carlo physics simulator with 10,000+ iterations.
 
 ---
 
-## 🌟 Fitur Utama
+## 🌟 Key Features
 
 ### 1. ⏱️ ML-Based Qualifying Grid Predictor
-* **Algoritma**: `LightGBM LTR (Learning-To-Rank)` berbasis *LambdaMART* untuk mengurutkan posisi starting grid secara akurat.
-* **Bayesian Credible Intervals**: Menggunakan *Quantile Regression* untuk memberikan rentang estimasi waktu lap terbaik, median, dan terburuk pada selang kepercayaan 90% yang dinamis terhadap suhu sirkuit dan intensitas hujan.
-* **SHAP Interpretability**: Visualisasi kontribusi performa latihan bebas (FP3/SQ) dan faktor prior pembalap terhadap hasil prediksi.
+* **Algorithm**: `LightGBM LTR (Learning-To-Rank)` powered by *LambdaMART* to accurately rank starting grid positions.
+* **Bayesian Credible Intervals**: Uses *Quantile Regression* to deliver best-case, median, and worst-case lap time estimates within a dynamic 90% credible interval sensitive to track temperature and rain intensity.
+* **SHAP Interpretability**: Visual breakdown of how practice session performance (FP3/SQ) and driver prior factors contribute to the predicted outcome.
 
 ### 2. 🏁 Vectorized Monte Carlo Race Simulator (10,000+ Runs)
-* **Simulasi Fisik Lap-demi-Lap**: Mensimulasikan ribuan balapan alternatif secara stokastik (acak) kurang dari 1 detik menggunakan operasi matriks ter-vektorisasi di NumPy.
-* **Pemodelan Balap Realistis**: Mengintegrasikan model degradasi ban fisik (Soft, Medium, Hard), efek udara kotor (*dirty air*), probabilitas keluarnya Safety Car berdasarkan sejarah sirkuit, tabrakan acak (DNF), dan strategi pergantian ban (pit stop).
-* **DNF Enforcement**: Menjamin pembalap yang sudah terkonfirmasi pensiun/DNF pada lap tertentu memiliki probabilitas 100% DNF di hasil simulasi.
+* **Lap-by-Lap Physics Simulation**: Simulates thousands of alternative races stochastically in under 1 second using fully vectorized NumPy matrix operations.
+* **Realistic Race Modelling**: Integrates physical tyre degradation models (Soft, Medium, Hard), dirty air effects, circuit-history-based Safety Car probabilities, random DNF crashes, and pit stop strategy.
+* **DNF Enforcement**: Guarantees that drivers confirmed retired at a specific lap carry a 100% DNF probability in simulation results.
 
 ### 3. 🔴 Live Status Awareness & Auto-Refresh
-* **Deteksi Status GP Dinamis**: Secara otomatis membagi balapan menjadi 3 status berdasarkan waktu UTC rill jadwal resmi FastF1 2026:
-  * `✅ RACE COMPLETED`: Balapan telah selesai (pengguna mendapat akses slider replay lap penuh P1-Finish).
-  * `🔴 LIVE — LAP X/Y`: Balapan sedang berjalan secara real-time.
-  * `📅 UPCOMING`: Balapan belum dimulai (menampilkan tanggal & jam tayang).
-* **Auto-Refresh Non-Blocking**: Halaman dashboard akan melakukan refresh otomatis non-blocking menggunakan `@st.fragment` setiap 30 detik untuk menarik data posisi berjalan dari FastF1 API hanya jika status balapan sedang `ONGOING`.
+* **Dynamic GP Status Detection**: Automatically classifies each race into 3 states based on real UTC timestamps from the official FastF1 2026 schedule:
+  * `✅ RACE COMPLETED`: Race is finished — users get full lap-replay slider access (P1 → Finish).
+  * `🔴 LIVE — LAP X/Y`: Race is currently running in real-time.
+  * `📅 UPCOMING`: Race has not started — displays date & local broadcast time.
+* **Non-Blocking Auto-Refresh**: The dashboard page auto-refreshes every 30 seconds using `@st.fragment` without blocking user interaction — live position data is only pulled from the FastF1 API when race status is `ONGOING`.
 
 ### 4. 🔄 Sprint Weekend Dynamic Fallbacks
-* **Penanganan Cerdas**: Jika sirkuit yang dipilih menggunakan format *Sprint Weekend* (yang tidak memiliki sesi FP3), sistem secara otomatis mengalihkan penarikan data performa kualifikasi ke **Sprint Qualifying (SQ)** atau **Practice 1 (FP1)** agar pipeline tidak crash.
+* **Smart Handling**: If the selected circuit runs a *Sprint Weekend* format (which has no FP3 session), the system automatically redirects qualifying performance data ingestion to **Sprint Qualifying (SQ)** or **Practice 1 (FP1)** so the pipeline never crashes.
 
 ---
 
-## 🏛️ Arsitektur Matematika Bayesian
+## 🏛️ Bayesian Mathematical Architecture
 
-Sistem ini mengaplikasikan **Teorema Bayes** untuk memperbarui ekspektasi performa pembalap secara dinamis:
+The system applies **Bayes' Theorem** to dynamically update driver performance expectations:
 
 $$\text{Posterior } P(A|B) \propto \text{Likelihood } P(B|A) \times \text{Prior } P(A)$$
 
@@ -64,74 +64,74 @@ $$\text{Posterior } P(A|B) \propto \text{Likelihood } P(B|A) \times \text{Prior 
                                                       +-----------------------------+
 ```
 
-### A. Prior — $P(A)$ (Ekspektasi Historis)
-* **Data**: Basis rating ELO awal pembalap (`base_elo` di `src/utils.py`). Dikalibrasi berdasarkan rangkuman statistik karier riil pembalap hingga akhir musim 2025 (persentase dominasi teampair) digabung dengan proyeksi performa mesin regulasi baru 2026 (mesin Mercedes superior, Red Bull terhambat reliabilitas).
+### A. Prior — $P(A)$ (Historical Expectation)
+* **Data Source**: Each driver's initial ELO base rating (`base_elo` in `src/utils.py`). Calibrated from a synthesis of real career statistics through the end of the 2025 season (team-pair dominance percentages) combined with projected 2026 regulation performance shifts (Mercedes engine superiority, Red Bull reliability concerns).
 
-### B. Likelihood — $P(B|A)$ (Performa Terkini)
-* **Data**: Selisih (*delta*) waktu rata-rata lap FP3 atau Sprint Qualifying antara pembalap dengan rekan satu timnya (head-to-head teampair). Jika pembalap dengan ELO prior rendah mengalahkan rekannya secara dominan, hal ini memberikan nilai *Likelihood* tinggi bahwa performanya saat ini sedang meningkat melampaui statistik historisnya.
+### B. Likelihood — $P(B|A)$ (Recent Performance Signal)
+* **Data Source**: The *delta* between a driver's average FP3 or Sprint Qualifying lap time and their teammate's (head-to-head team-pair comparison). If a driver with a low prior ELO decisively beats their teammate, this generates a high Likelihood signal indicating their current form exceeds historical baseline expectations.
 
-### C. Posterior — $P(A|B)$ (Rating Performa Terkini)
-* **Data**: ELO Terupdate (`updated_elo`). Rating ini akan bergeser naik jika pembalap berkinerja lebih baik daripada dugaan awal (Prior) dan turun jika sebaliknya. ELO Posterior ini diumpankan ke model kualifikasi (ML Ranker) dan simulator balapan (baseline fisik pembalap).
+### C. Posterior — $P(A|B)$ (Updated Performance Rating)
+* **Data Source**: The updated ELO (`updated_elo`). This rating shifts upward if a driver performs better than their Prior suggested, and downward if worse. The Posterior ELO is then fed directly into the qualifying ML ranker and the race simulator as the driver's physical performance baseline.
 
 ---
 
-## 📂 Struktur Direktori
+## 📂 Project Structure
 
 ```text
 ├── .streamlit/
-│   └── config.toml          # Konfigurasi visual tema Premium Asphalt & Neon Red
+│   └── config.toml          # Premium Asphalt & Neon Red visual theme config
 ├── src/
 │   ├── __init__.py
-│   ├── data_ingestion.py   # API Parser FastF1, Penentu Status GP & Sprint Fallbacks
-│   ├── models.py           # Model LGBM Ranker, Regresi Kuantil, & MC Simulator
-│   └── utils.py            # Basis Data Sirkuit 2026, ELO Calibrator & Utility Matematika
-├── app.py                  # Aplikasi Dashboard Utama Streamlit
-├── run_pipeline.py         # Pipeline CLI End-to-End Prediksi
-├── fastf1_tutorial.ipynb   # Jupyter Notebook interaktif arsitektur dan tutorial end-to-end
-├── requirements.txt        # Daftar dependensi modul Python
-└── README.md               # Dokumentasi Proyek
+│   ├── data_ingestion.py   # FastF1 API parser, GP status detector & Sprint fallbacks
+│   ├── models.py           # LGBM Ranker, Quantile Regression & MC Simulator
+│   └── utils.py            # 2026 circuit database, ELO calibration & math utilities
+├── app.py                  # Main Streamlit dashboard application
+├── run_pipeline.py         # End-to-end CLI prediction pipeline
+├── fastf1_tutorial.ipynb   # Interactive Jupyter Notebook: architecture & end-to-end tutorial
+├── requirements.txt        # Python module dependencies
+└── README.md               # Project documentation
 ```
 
 ---
 
-## 🚀 Instalasi & Cara Menjalankan
+## 🚀 Installation & Quick Start
 
-### 1. Kloning Repositori
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/fbudimannn/F1_PREDICTION.git
 cd F1_PREDICTION
 ```
 
-### 2. Buat Virtual Environment & Install Dependensi
+### 2. Create a Virtual Environment & Install Dependencies
 ```bash
 python -m venv venv
-source venv/bin/activate  # Untuk Linux/macOS
-# atau
-venv\Scripts\activate     # Untuk Windows
+source venv/bin/activate  # Linux/macOS
+# or
+venv\Scripts\activate     # Windows
 
 pip install -r requirements.txt
 ```
 
-### 3. Jalankan Aplikasi Dashboard Streamlit
+### 3. Run the Streamlit Dashboard
 ```bash
 streamlit run app.py
 ```
 
-### 4. Jalankan Pipeline Prediksi lewat CLI (Terminal)
-Anda bisa mengeksekusi pipeline prediksi kualifikasi dan balapan sirkuit mana pun secara langsung via command-line:
+### 4. Run the Prediction Pipeline via CLI
+You can execute the full qualifying and race prediction pipeline for any circuit directly from the terminal:
 ```bash
 python run_pipeline.py --circuit canada --temp 28.0 --sims 10000
 ```
 
 ---
 
-## ☁️ Panduan Deployment (Streamlit Community Cloud)
+## ☁️ Deployment Guide (Streamlit Community Cloud)
 
-1. Pastikan seluruh kode terbaru di cabang `main` sudah terdorong ke repositori GitHub Anda.
-2. Masuk ke **[share.streamlit.io](https://share.streamlit.io/)** menggunakan akun GitHub Anda.
-3. Klik **"New app"** di dashboard Streamlit Cloud Anda.
-4. Setel konfigurasi berikut:
+1. Ensure the latest code on the `main` branch is pushed to your GitHub repository.
+2. Sign in to **[share.streamlit.io](https://share.streamlit.io/)** with your GitHub account.
+3. Click **"New app"** on your Streamlit Cloud dashboard.
+4. Configure the following settings:
    * **Repository**: `fbudimannn/F1_PREDICTION`
    * **Branch**: `main`
    * **Main file path**: `app.py`
-5. Klik **"Deploy!"** dan aplikasi dashboard analitik premium F1 Anda akan aktif secara publik dalam beberapa saat!
+5. Click **"Deploy!"** and your premium F1 analytics dashboard will be live publicly within moments!
