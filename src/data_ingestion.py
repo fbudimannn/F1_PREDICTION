@@ -336,15 +336,19 @@ def fetch_gp_practice_data(circuit_id, session="FP3"):
             tyre_codes[d] = int(tyre)
             
         # Determine fallback session name based on event format
-        try:
-            schedule = fastf1.get_event_schedule(2026)
-            event_row = schedule[schedule['EventName'].str.contains(gp_name.split(' ')[0], case=False)]
-            if len(event_row) > 0 and event_row.iloc[0]['EventFormat'] == 'sprint_qualifying':
-                actual_session = "Sprint Qualifying (Fallback)"
-            else:
+        sprint_circuits = {"china", "miami", "austria", "united_states", "brazil", "qatar"}
+        if circuit_id in sprint_circuits and session == "FP3":
+            actual_session = "Sprint Qualifying (Fallback)"
+        else:
+            try:
+                schedule = fastf1.get_event_schedule(2026)
+                event_row = schedule[schedule['EventName'].str.contains(gp_name.split(' ')[0], case=False)]
+                if len(event_row) > 0 and event_row.iloc[0]['EventFormat'] == 'sprint_qualifying':
+                    actual_session = "Sprint Qualifying (Fallback)"
+                else:
+                    actual_session = f"{session} (Fallback)"
+            except:
                 actual_session = f"{session} (Fallback)"
-        except:
-            actual_session = f"{session} (Fallback)"
             
         return fp3_results, speed_traps, tyre_codes, actual_session
 
