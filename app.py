@@ -352,7 +352,7 @@ with tab_telemetry:
 <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 15px; margin-bottom: 15px; background: rgba(22, 26, 34, 0.5); padding: 15px 10px; border-radius: 10px; border: 1px solid rgba(255, 24, 1, 0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
     <div style="text-align: center; width: 45%;">
         <div style="position: relative; display: inline-block;">
-            <img src="{img_a}" style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid {color_a}; object-fit: cover; box-shadow: 0 0 12px {color_a}88; background-color: #12151c;">
+            <img src="{img_a}" style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid {color_a}; object-fit: cover; object-position: center top; box-shadow: 0 0 12px {color_a}88; background-color: #12151c;">
         </div>
         <div style="font-weight: 800; font-size: 13px; margin-top: 6px; color: #f0f3f6;">{driver_a}</div>
         <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_a]['name']}</div>
@@ -360,7 +360,7 @@ with tab_telemetry:
     <div style="font-weight: 800; font-size: 16px; color: #ff1801; text-shadow: 0 0 10px rgba(255,24,1,0.6); font-family: 'Outfit', sans-serif;">VS</div>
     <div style="text-align: center; width: 45%;">
         <div style="position: relative; display: inline-block;">
-            <img src="{img_b}" style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid {color_b}; object-fit: cover; box-shadow: 0 0 12px {color_b}88; background-color: #12151c;">
+            <img src="{img_b}" style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid {color_b}; object-fit: cover; object-position: center top; box-shadow: 0 0 12px {color_b}88; background-color: #12151c;">
         </div>
         <div style="font-weight: 800; font-size: 13px; margin-top: 6px; color: #f0f3f6;">{driver_b}</div>
         <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_b]['name']}</div>
@@ -473,7 +473,7 @@ with tab_qualy:
             st.markdown(f"""
 <div class="card" style="border-left: 5px solid {d_color}; position: relative; overflow: hidden; min-height: 180px;">
     <!-- Faded Driver Portrait Background -->
-    <div style="position: absolute; right: -10px; bottom: -10px; width: 120px; height: 120px; background-image: url('{driver_img}'); background-size: cover; background-position: center; opacity: 0.28; mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
+    <div style="position: absolute; right: -10px; bottom: -10px; width: 120px; height: 120px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.28; mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
     <div style="position: relative; z-index: 1;">
         <div style="display: flex; justify-content: space-between;">
             <span style="font-size: 28px; font-weight: 800; color: {d_color};">P{p['predicted_position']}</span>
@@ -686,7 +686,7 @@ with tab_race:
     <!-- P2 (Left) -->
     <div style="display: flex; flex-direction: column; align-items: center; width: 30%; max-width: 140px;">
         <div style="position: relative; text-align: center; margin-bottom: 5px;">
-            <img src="{p2_img}" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid {p2_color}; object-fit: cover; box-shadow: 0 4px 15px {p2_color}66; background-color: #12151c;">
+            <img src="{p2_img}" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid {p2_color}; object-fit: cover; object-position: center top; box-shadow: 0 4px 15px {p2_color}66; background-color: #12151c;">
             <span style="position: absolute; bottom: -5px; right: 5px; background: #c0c0c0; color: #111; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 10px;">P2</span>
         </div>
         <div style="font-weight: 800; font-size: 13px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p2_name}</div>
@@ -699,7 +699,7 @@ with tab_race:
     <div style="display: flex; flex-direction: column; align-items: center; width: 34%; max-width: 160px; transform: translateY(-15px);">
         <div style="position: relative; text-align: center; margin-bottom: 5px;">
             <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%) rotate(-5deg); font-size: 20px; z-index: 2;">👑</div>
-            <img src="{p1_img}" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid {p1_color}; object-fit: cover; box-shadow: 0 4px 20px {p1_color}bb; background-color: #12151c;">
+            <img src="{p1_img}" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid {p1_color}; object-fit: cover; object-position: center top; box-shadow: 0 4px 20px {p1_color}bb; background-color: #12151c;">
             <span style="position: absolute; bottom: -5px; right: 8px; background: #ffd700; color: #111; font-weight: 800; font-size: 11px; padding: 2px 7px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">P1</span>
         </div>
         <div style="font-weight: 800; font-size: 15px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p1_name}</div>
@@ -711,7 +711,7 @@ with tab_race:
     <!-- P3 (Right) -->
     <div style="display: flex; flex-direction: column; align-items: center; width: 30%; max-width: 140px;">
         <div style="position: relative; text-align: center; margin-bottom: 5px;">
-            <img src="{p3_img}" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid {p3_color}; object-fit: cover; box-shadow: 0 4px 15px {p3_color}66; background-color: #12151c;">
+            <img src="{p3_img}" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid {p3_color}; object-fit: cover; object-position: center top; box-shadow: 0 4px 15px {p3_color}66; background-color: #12151c;">
             <span style="position: absolute; bottom: -5px; right: 5px; background: #cd7f32; color: #111; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 10px;">P3</span>
         </div>
         <div style="font-weight: 800; font-size: 13px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p3_name}</div>
