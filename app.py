@@ -283,7 +283,7 @@ tab_telemetry, tab_qualy, tab_race = st.tabs([
     "📊 LIVE PRACTICE & TELEMETRY", 
     "⏱️ QUALIFYING GRID PREDICTOR", 
     "🏁 MONTE CARLO RACE SIMULATOR"
-])
+], key="main_tabs")
 
 # ==========================================
 # TAB 1: LIVE PRACTICE & TELEMETRY COMPARATOR
