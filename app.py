@@ -219,6 +219,7 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("### 🔄 Operations")
 if st.sidebar.button("Refresh Data & Clear Cache", help="Clears Streamlit cache and forces a full model retrain and data fetch"):
     st.cache_resource.clear()
+    st.cache_data.clear()
     st.rerun()
 
 st.sidebar.markdown("---")
