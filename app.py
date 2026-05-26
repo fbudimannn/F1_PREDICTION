@@ -691,154 +691,112 @@ if race_status["status"] == "ONGOING":
             
     live_auto_refresh()
 
-# 8. Floating Music Player Widget (Native st.audio with CSS floating)
-# Using Streamlit's native st.audio() which handles file serving internally,
-# bypassing all CORS/sandbox/iframe issues that broke the custom player.
-import base64 as _b64
+# 8. F1 Radio — Background Music Player (Sidebar)
+# Placed in the sidebar because Streamlit's main content area has
+# overflow:hidden + transform that breaks position:fixed CSS.
+# The sidebar is already fixed-position, so the player is always visible.
 
 _mp3_path = os.path.join("static", "F1.mp3")
 if os.path.exists(_mp3_path):
     with open(_mp3_path, "rb") as _f:
         _audio_bytes = _f.read()
-else:
-    _audio_bytes = None
 
-if _audio_bytes:
-    # CSS: Premium F1-themed floating audio player
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("""
+    <div style="
+        background: linear-gradient(145deg, rgba(13,15,18,0.95), rgba(30,30,42,0.95));
+        border: 1px solid rgba(255,24,1,0.35);
+        border-radius: 14px;
+        padding: 14px 16px 12px 16px;
+        box-shadow: 0 0 25px rgba(255,24,1,0.08), 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+        margin-bottom: 8px;
+    ">
+        <div style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,24,1,0.15);
+        ">
+            <span style="font-size: 16px;">🏎️</span>
+            <span style="
+                font-family: 'Outfit', sans-serif;
+                font-size: 11px;
+                font-weight: 800;
+                letter-spacing: 2.5px;
+                color: #ff1801;
+                text-shadow: 0 0 12px rgba(255,24,1,0.5);
+                text-transform: uppercase;
+            ">F1 RADIO</span>
+            <span style="
+                margin-left: auto;
+                width: 6px;
+                height: 6px;
+                background: #ff1801;
+                border-radius: 50%;
+                box-shadow: 0 0 8px rgba(255,24,1,0.8);
+                animation: f1pulse 1.5s ease-in-out infinite;
+            "></span>
+        </div>
+        <style>
+            @keyframes f1pulse {
+                0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(255,24,1,0.8); }
+                50% { opacity: 0.3; box-shadow: 0 0 4px rgba(255,24,1,0.3); }
+            }
+        </style>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Inject CSS to style the sidebar audio element
     st.markdown("""
     <style>
-        /* === F1 FLOATING AUDIO PLAYER — Carbon & Neon Red === */
-
-        /* Float the audio container to the bottom-right */
-        div[data-testid="stAudio"] {
-            position: fixed !important;
-            bottom: 24px !important;
-            right: 24px !important;
-            z-index: 999999 !important;
-            width: 290px !important;
-            background: linear-gradient(
-                145deg,
-                rgba(13, 15, 18, 0.97),
-                rgba(22, 26, 34, 0.97)
-            ) !important;
-            backdrop-filter: blur(20px) saturate(1.4) !important;
-            border: 1px solid rgba(255, 24, 1, 0.35) !important;
-            border-radius: 16px !important;
-            padding: 14px 18px 12px 18px !important;
-            box-shadow:
-                0 0 30px rgba(255, 24, 1, 0.10),
-                0 8px 32px rgba(0, 0, 0, 0.55),
-                inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
-            margin: 0 !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            overflow: visible !important;
-        }
-
-        /* Hover glow effect */
-        div[data-testid="stAudio"]:hover {
-            border-color: rgba(255, 24, 1, 0.6) !important;
-            box-shadow:
-                0 0 40px rgba(255, 24, 1, 0.18),
-                0 12px 40px rgba(0, 0, 0, 0.65),
-                inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
-            transform: translateY(-2px) !important;
-        }
-
-        /* F1 RADIO label via CSS pseudo-element */
-        div[data-testid="stAudio"]::before {
-            content: "🏎️  F1 RADIO";
-            display: block;
-            font-family: 'Outfit', sans-serif;
-            font-size: 10.5px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #ff1801;
-            text-shadow: 0 0 10px rgba(255, 24, 1, 0.4);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 24, 1, 0.15);
-        }
-
-        /* Style the native audio element */
-        div[data-testid="stAudio"] audio {
+        /* Style the sidebar audio player */
+        section[data-testid="stSidebar"] audio {
             width: 100% !important;
-            height: 36px !important;
+            height: 38px !important;
             border-radius: 10px !important;
             outline: none !important;
         }
 
-        /* === Webkit Audio Controls Shadow DOM Styling === */
-
-        /* Controls panel background */
-        div[data-testid="stAudio"] audio::-webkit-media-controls-panel {
-            background: rgba(255, 255, 255, 0.04) !important;
+        /* Webkit Shadow DOM: controls panel */
+        section[data-testid="stSidebar"] audio::-webkit-media-controls-panel {
+            background: rgba(255, 255, 255, 0.05) !important;
             border-radius: 10px !important;
-            padding: 0 4px !important;
         }
 
-        /* Play button */
-        div[data-testid="stAudio"] audio::-webkit-media-controls-play-button {
+        /* Webkit Shadow DOM: play button red */
+        section[data-testid="stSidebar"] audio::-webkit-media-controls-play-button {
             background-color: #ff1801 !important;
             border-radius: 50% !important;
             transform: scale(1.15) !important;
-            transition: all 0.2s ease !important;
         }
-        div[data-testid="stAudio"] audio::-webkit-media-controls-play-button:hover {
+        section[data-testid="stSidebar"] audio::-webkit-media-controls-play-button:hover {
             background-color: #ff4433 !important;
-            transform: scale(1.25) !important;
+            transform: scale(1.3) !important;
         }
 
-        /* Timeline / seek bar */
-        div[data-testid="stAudio"] audio::-webkit-media-controls-timeline {
+        /* Webkit Shadow DOM: timeline */
+        section[data-testid="stSidebar"] audio::-webkit-media-controls-timeline {
             background-color: rgba(255, 24, 1, 0.15) !important;
             border-radius: 6px !important;
-            height: 4px !important;
         }
 
-        /* Time displays */
-        div[data-testid="stAudio"] audio::-webkit-media-controls-current-time-display,
-        div[data-testid="stAudio"] audio::-webkit-media-controls-time-remaining-display {
+        /* Webkit Shadow DOM: time text */
+        section[data-testid="stSidebar"] audio::-webkit-media-controls-current-time-display,
+        section[data-testid="stSidebar"] audio::-webkit-media-controls-time-remaining-display {
             color: #8f9cae !important;
             font-family: 'Outfit', monospace !important;
-            font-size: 11px !important;
+            font-size: 10px !important;
         }
 
-        /* Volume slider */
-        div[data-testid="stAudio"] audio::-webkit-media-controls-volume-slider {
+        /* Webkit Shadow DOM: volume */
+        section[data-testid="stSidebar"] audio::-webkit-media-controls-volume-slider {
             background-color: rgba(255, 24, 1, 0.2) !important;
             border-radius: 4px !important;
-        }
-
-        /* Mute button */
-        div[data-testid="stAudio"] audio::-webkit-media-controls-mute-button {
-            transform: scale(1.1) !important;
-        }
-
-        /* Hide any extra labels/captions Streamlit adds */
-        div[data-testid="stAudio"] label,
-        div[data-testid="stAudio"] .stMarkdown {
-            display: none !important;
-        }
-
-        /* Subtle red line accent at bottom of the widget */
-        div[data-testid="stAudio"]::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 20%;
-            right: 20%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #ff1801, transparent);
-            border-radius: 2px;
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-        }
-        div[data-testid="stAudio"]:hover::after {
-            opacity: 0.9;
         }
     </style>
     """, unsafe_allow_html=True)
 
-    st.audio(_audio_bytes, format="audio/mp3", loop=True)
+    st.sidebar.audio(_audio_bytes, format="audio/mp3", loop=True)
 
