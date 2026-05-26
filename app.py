@@ -223,12 +223,12 @@ st.markdown(f"<p style='color: #8f9cae; font-size: 16px; margin-bottom: 25px;'>A
 
 # 5. Core Model & Session State Initialization
 @st.cache_resource
-def load_qualy_model():
+def load_qualy_model_v2():
     model = QualifyingModel()
     model.train_mock_models()
     return model
 
-qualy_model = load_qualy_model()
+qualy_model = load_qualy_model_v2()
 
 # Cached function for ingestion to prevent constant API/generation overhead on minor reruns
 @st.cache_data
