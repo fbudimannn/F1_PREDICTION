@@ -232,7 +232,7 @@ qualy_model = load_qualy_model()
 
 # Cached function for ingestion to prevent constant API/generation overhead on minor reruns
 @st.cache_data
-def get_cached_practice_data(circuit_id):
+def get_cached_practice_data_v2(circuit_id):
     return fetch_gp_practice_data(circuit_id, session="FP3")
 # Cached function for actual qualifying data to prevent API overhead on minor reruns
 @st.cache_data
@@ -240,7 +240,7 @@ def get_cached_actual_qualifying_results(circuit_id):
     return fetch_actual_qualifying_results(circuit_id)
 
 # Ingest practice times for the track
-fp3_times, speed_traps, tyre_codes, loaded_session = get_cached_practice_data(active_circuit)
+fp3_times, speed_traps, tyre_codes, loaded_session = get_cached_practice_data_v2(active_circuit)
 
 # Ensure data directory exists and persist API practice data locally
 os.makedirs("data", exist_ok=True)
