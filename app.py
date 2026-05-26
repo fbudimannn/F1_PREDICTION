@@ -569,7 +569,7 @@ with tab_race:
     
     sim_engine = MonteCarloSimulator(active_circuit)
     
-    with st.spinner("Running 10,000 vectorized NumPy race runs..."):
+    with st.spinner(f"Running {sim_iterations:,} vectorized NumPy race runs..."):
         sim_stats = sim_engine.simulate_race(
             starting_grid, tyre_strategies, num_sims=sim_iterations, current_lap=curr_lap, active_state=active_state, rain_intensity=rain_intensity
         )
