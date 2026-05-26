@@ -693,7 +693,7 @@ if race_status["status"] == "ONGOING":
 
 # 8. Floating Music Player Widget
 music_player_html = """
-<div id="music-player-container" style="position: fixed; bottom: 20px; right: 20px; background: rgba(18, 21, 28, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255, 24, 1, 0.3); padding: 8px 12px; border-radius: 30px; display: flex; align-items: center; gap: 8px; z-index: 999999; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); transition: all 0.3s ease;">
+<div id="music-player-container" style="position: fixed; bottom: 80px; right: 20px; background: rgba(18, 21, 28, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255, 24, 1, 0.3); padding: 8px 12px; border-radius: 30px; display: flex; align-items: center; gap: 8px; z-index: 999999; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); transition: all 0.3s ease;">
 <button id="music-play-btn" style="background: #ff1801; border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: transform 0.2s ease, background 0.2s ease; outline: none;">▶</button>
 <div id="music-volume-container" style="display: flex; align-items: center; gap: 5px; width: 0; overflow: hidden; transition: width 0.3s ease;">
 <span style="color: #8f9cae; font-size: 11px;">🔊</span>
