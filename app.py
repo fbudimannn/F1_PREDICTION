@@ -349,59 +349,24 @@ with tab_telemetry:
             
             # Show a beautiful VS layout with pictures
             st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-                margin-top: 15px;
-                margin-bottom: 15px;
-                background: rgba(22, 26, 34, 0.5);
-                padding: 15px 10px;
-                border-radius: 10px;
-                border: 1px solid rgba(255, 24, 1, 0.15);
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            ">
-                <div style="text-align: center; width: 45%;">
-                    <div style="position: relative; display: inline-block;">
-                        <img src="{img_a}" style="
-                            width: 65px;
-                            height: 65px;
-                            border-radius: 50%;
-                            border: 3px solid {color_a};
-                            object-fit: cover;
-                            box-shadow: 0 0 12px {color_a}88;
-                            background-color: #12151c;
-                        ">
-                    </div>
-                    <div style="font-weight: 800; font-size: 13px; margin-top: 6px; color: #f0f3f6;">{driver_a}</div>
-                    <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_a]['name']}</div>
-                </div>
-                
-                <div style="
-                    font-weight: 800;
-                    font-size: 16px;
-                    color: #ff1801;
-                    text-shadow: 0 0 10px rgba(255,24,1,0.6);
-                    font-family: 'Outfit', sans-serif;
-                ">VS</div>
-                
-                <div style="text-align: center; width: 45%;">
-                    <div style="position: relative; display: inline-block;">
-                        <img src="{img_b}" style="
-                            width: 65px;
-                            height: 65px;
-                            border-radius: 50%;
-                            border: 3px solid {color_b};
-                            object-fit: cover;
-                            box-shadow: 0 0 12px {color_b}88;
-                            background-color: #12151c;
-                        ">
-                    </div>
-                    <div style="font-weight: 800; font-size: 13px; margin-top: 6px; color: #f0f3f6;">{driver_b}</div>
-                    <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_b]['name']}</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+<div style="display: flex; justify-content: space-around; align-items: center; margin-top: 15px; margin-bottom: 15px; background: rgba(22, 26, 34, 0.5); padding: 15px 10px; border-radius: 10px; border: 1px solid rgba(255, 24, 1, 0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    <div style="text-align: center; width: 45%;">
+        <div style="position: relative; display: inline-block;">
+            <img src="{img_a}" style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid {color_a}; object-fit: cover; box-shadow: 0 0 12px {color_a}88; background-color: #12151c;">
+        </div>
+        <div style="font-weight: 800; font-size: 13px; margin-top: 6px; color: #f0f3f6;">{driver_a}</div>
+        <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_a]['name']}</div>
+    </div>
+    <div style="font-weight: 800; font-size: 16px; color: #ff1801; text-shadow: 0 0 10px rgba(255,24,1,0.6); font-family: 'Outfit', sans-serif;">VS</div>
+    <div style="text-align: center; width: 45%;">
+        <div style="position: relative; display: inline-block;">
+            <img src="{img_b}" style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid {color_b}; object-fit: cover; box-shadow: 0 0 12px {color_b}88; background-color: #12151c;">
+        </div>
+        <div style="font-weight: 800; font-size: 13px; margin-top: 6px; color: #f0f3f6;">{driver_b}</div>
+        <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_b]['name']}</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
             
             st.markdown(f"<br><strong>{loaded_session} Average Lap Times:</strong>", unsafe_allow_html=True)
             st.write(f"🏎️ **{driver_a}:** {format_lap_time(fp3_times[driver_a])}")
@@ -506,40 +471,26 @@ with tab_qualy:
             driver_img = get_driver_image_base64(p["driver_code"])
             
             st.markdown(f"""
-            <div class='card' style='border-left: 5px solid {d_color}; position: relative; overflow: hidden; min-height: 180px;'>
-                <!-- Faded Driver Portrait Background -->
-                <div style='
-                    position: absolute;
-                    right: -10px;
-                    bottom: -10px;
-                    width: 120px;
-                    height: 120px;
-                    background-image: url("{driver_img}");
-                    background-size: cover;
-                    background-position: center;
-                    opacity: 0.28;
-                    mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
-                    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
-                    pointer-events: none;
-                    z-index: 0;
-                '></div>
-                <div style='position: relative; z-index: 1;'>
-                    <div style='display: flex; justify-content: space-between;'>
-                        <span style='font-size: 28px; font-weight: 800; color: {d_color};'>P{p['predicted_position']}</span>
-                        <span style='font-size: 14px; font-weight: 600; color: #8f9cae;'>{p['driver_code']}</span>
-                    </div>
-                    <h5 style='margin: 3px 0; font-weight: 800; font-size: 16px; color: #f0f3f6;'>{p['driver_name']}</h5>
-                    <small style='color: #8f9cae;'>{p['team']}</small><br>
-                    <div style='margin-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 6px;'>
-                        <small>🎯 <strong>Median:</strong> {format_lap_time(p['median_time'])}</small><br>
-                        <small>🔍 <strong>Range:</strong> {format_lap_time(p['best_case_time'])} - {format_lap_time(p['worst_case_time'])}</small>
-                    </div>
-                    <div style='margin-top: 4px; font-size: 9px; color: {d_color}; opacity: 0.9;'>
-                        ✨ <strong>SHAP:</strong> FP3 ({shap_fp3:.2f}s) | Prior ({shap_elo:.2f}s)
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+<div class="card" style="border-left: 5px solid {d_color}; position: relative; overflow: hidden; min-height: 180px;">
+    <!-- Faded Driver Portrait Background -->
+    <div style="position: absolute; right: -10px; bottom: -10px; width: 120px; height: 120px; background-image: url('{driver_img}'); background-size: cover; background-position: center; opacity: 0.28; mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
+    <div style="position: relative; z-index: 1;">
+        <div style="display: flex; justify-content: space-between;">
+            <span style="font-size: 28px; font-weight: 800; color: {d_color};">P{p['predicted_position']}</span>
+            <span style="font-size: 14px; font-weight: 600; color: #8f9cae;">{p['driver_code']}</span>
+        </div>
+        <h5 style="margin: 3px 0; font-weight: 800; font-size: 16px; color: #f0f3f6;">{p['driver_name']}</h5>
+        <small style="color: #8f9cae;">{p['team']}</small><br>
+        <div style="margin-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 6px;">
+            <small>🎯 <strong>Median:</strong> {format_lap_time(p['median_time'])}</small><br>
+            <small>🔍 <strong>Range:</strong> {format_lap_time(p['best_case_time'])} - {format_lap_time(p['worst_case_time'])}</small>
+        </div>
+        <div style="margin-top: 4px; font-size: 9px; color: {d_color}; opacity: 0.9;">
+            ✨ <strong>SHAP:</strong> FP3 ({shap_fp3:.2f}s) | Prior ({shap_elo:.2f}s)
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ==========================================
 # TAB 3: MONTE CARLO RACE SIMULATOR
@@ -731,74 +682,46 @@ with tab_race:
         p3_color = get_driver_color(p3_code)
         
         st.markdown(f"""
-        <div style="display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 35px auto 25px auto; max-width: 600px; height: 260px; font-family: 'Outfit', sans-serif;">
-            
-            <!-- P2 (Left) -->
-            <div style="display: flex; flex-direction: column; align-items: center; width: 30%; max-width: 140px;">
-                <div style="position: relative; text-align: center; margin-bottom: 5px;">
-                    <img src="{p2_img}" style="
-                        width: 70px; 
-                        height: 70px; 
-                        border-radius: 50%; 
-                        border: 3px solid {p2_color}; 
-                        object-fit: cover; 
-                        box-shadow: 0 4px 15px {p2_color}66;
-                        background-color: #12151c;
-                    ">
-                    <span style="position: absolute; bottom: -5px; right: 5px; background: #c0c0c0; color: #111; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 10px;">P2</span>
-                </div>
-                <div style="font-weight: 800; font-size: 13px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p2_name}</div>
-                <div style="font-size: 11px; color: #8f9cae; margin-bottom: 8px;">{p2_prob:.1f}% Win</div>
-                <div style="width: 100%; height: 75px; background: linear-gradient(180deg, rgba(90,100,112,0.3), rgba(44,50,58,0.3)); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(192,192,192,0.25); border-bottom: none; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                    <span style="font-size: 28px; font-weight: 800; color: #c0c0c0; text-shadow: 0 0 10px rgba(192,192,192,0.3);">2</span>
-                </div>
-            </div>
-
-            <!-- P1 (Center) -->
-            <div style="display: flex; flex-direction: column; align-items: center; width: 34%; max-width: 160px; transform: translateY(-15px);">
-                <div style="position: relative; text-align: center; margin-bottom: 5px;">
-                    <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%) rotate(-5deg); font-size: 20px; z-index: 2;">👑</div>
-                    <img src="{p1_img}" style="
-                        width: 90px; 
-                        height: 90px; 
-                        border-radius: 50%; 
-                        border: 4px solid {p1_color}; 
-                        object-fit: cover; 
-                        box-shadow: 0 4px 20px {p1_color}bb;
-                        background-color: #12151c;
-                    ">
-                    <span style="position: absolute; bottom: -5px; right: 8px; background: #ffd700; color: #111; font-weight: 800; font-size: 11px; padding: 2px 7px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">P1</span>
-                </div>
-                <div style="font-weight: 800; font-size: 15px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p1_name}</div>
-                <div style="font-size: 12px; color: #ff1801; font-weight: 800; text-shadow: 0 0 10px rgba(255,24,1,0.4); margin-bottom: 8px;">{p1_prob:.1f}% Win</div>
-                <div style="width: 100%; height: 105px; background: linear-gradient(180deg, rgba(255,24,1,0.25), rgba(107,10,0,0.25)); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,24,1,0.4); border-bottom: none; box-shadow: 0 4px 25px rgba(255,24,1,0.25);">
-                    <span style="font-size: 38px; font-weight: 800; color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.6);">1</span>
-                </div>
-            </div>
-
-            <!-- P3 (Right) -->
-            <div style="display: flex; flex-direction: column; align-items: center; width: 30%; max-width: 140px;">
-                <div style="position: relative; text-align: center; margin-bottom: 5px;">
-                    <img src="{p3_img}" style="
-                        width: 70px; 
-                        height: 70px; 
-                        border-radius: 50%; 
-                        border: 3px solid {p3_color}; 
-                        object-fit: cover; 
-                        box-shadow: 0 4px 15px {p3_color}66;
-                        background-color: #12151c;
-                    ">
-                    <span style="position: absolute; bottom: -5px; right: 5px; background: #cd7f32; color: #111; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 10px;">P3</span>
-                </div>
-                <div style="font-weight: 800; font-size: 13px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p3_name}</div>
-                <div style="font-size: 11px; color: #8f9cae; margin-bottom: 8px;">{p3_prob:.1f}% Win</div>
-                <div style="width: 100%; height: 55px; background: linear-gradient(180deg, rgba(160,90,44,0.3), rgba(74,39,17,0.3)); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(205,127,50,0.25); border-bottom: none; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                    <span style="font-size: 24px; font-weight: 800; color: #cd7f32; text-shadow: 0 0 10px rgba(205,127,50,0.3);">3</span>
-                </div>
-            </div>
-
+<div style="display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 35px auto 25px auto; max-width: 600px; height: 260px; font-family: 'Outfit', sans-serif;">
+    <!-- P2 (Left) -->
+    <div style="display: flex; flex-direction: column; align-items: center; width: 30%; max-width: 140px;">
+        <div style="position: relative; text-align: center; margin-bottom: 5px;">
+            <img src="{p2_img}" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid {p2_color}; object-fit: cover; box-shadow: 0 4px 15px {p2_color}66; background-color: #12151c;">
+            <span style="position: absolute; bottom: -5px; right: 5px; background: #c0c0c0; color: #111; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 10px;">P2</span>
         </div>
-        """, unsafe_allow_html=True)
+        <div style="font-weight: 800; font-size: 13px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p2_name}</div>
+        <div style="font-size: 11px; color: #8f9cae; margin-bottom: 8px;">{p2_prob:.1f}% Win</div>
+        <div style="width: 100%; height: 75px; background: linear-gradient(180deg, rgba(90,100,112,0.3), rgba(44,50,58,0.3)); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(192,192,192,0.25); border-bottom: none; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <span style="font-size: 28px; font-weight: 800; color: #c0c0c0; text-shadow: 0 0 10px rgba(192,192,192,0.3);">2</span>
+        </div>
+    </div>
+    <!-- P1 (Center) -->
+    <div style="display: flex; flex-direction: column; align-items: center; width: 34%; max-width: 160px; transform: translateY(-15px);">
+        <div style="position: relative; text-align: center; margin-bottom: 5px;">
+            <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%) rotate(-5deg); font-size: 20px; z-index: 2;">👑</div>
+            <img src="{p1_img}" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid {p1_color}; object-fit: cover; box-shadow: 0 4px 20px {p1_color}bb; background-color: #12151c;">
+            <span style="position: absolute; bottom: -5px; right: 8px; background: #ffd700; color: #111; font-weight: 800; font-size: 11px; padding: 2px 7px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">P1</span>
+        </div>
+        <div style="font-weight: 800; font-size: 15px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p1_name}</div>
+        <div style="font-size: 12px; color: #ff1801; font-weight: 800; text-shadow: 0 0 10px rgba(255,24,1,0.4); margin-bottom: 8px;">{p1_prob:.1f}% Win</div>
+        <div style="width: 100%; height: 105px; background: linear-gradient(180deg, rgba(255,24,1,0.25), rgba(107,10,0,0.25)); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,24,1,0.4); border-bottom: none; box-shadow: 0 4px 25px rgba(255,24,1,0.25);">
+            <span style="font-size: 38px; font-weight: 800; color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.6);">1</span>
+        </div>
+    </div>
+    <!-- P3 (Right) -->
+    <div style="display: flex; flex-direction: column; align-items: center; width: 30%; max-width: 140px;">
+        <div style="position: relative; text-align: center; margin-bottom: 5px;">
+            <img src="{p3_img}" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid {p3_color}; object-fit: cover; box-shadow: 0 4px 15px {p3_color}66; background-color: #12151c;">
+            <span style="position: absolute; bottom: -5px; right: 5px; background: #cd7f32; color: #111; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 10px;">P3</span>
+        </div>
+        <div style="font-weight: 800; font-size: 13px; color: #f0f3f6; margin-top: 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{p3_name}</div>
+        <div style="font-size: 11px; color: #8f9cae; margin-bottom: 8px;">{p3_prob:.1f}% Win</div>
+        <div style="width: 100%; height: 55px; background: linear-gradient(180deg, rgba(160,90,44,0.3), rgba(74,39,17,0.3)); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(205,127,50,0.25); border-bottom: none; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <span style="font-size: 24px; font-weight: 800; color: #cd7f32; text-shadow: 0 0 10px rgba(205,127,50,0.3);">3</span>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
     
     st.markdown("#### Predicted Race Finish Probability (Top 10)")
     
