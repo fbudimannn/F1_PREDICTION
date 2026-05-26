@@ -473,7 +473,7 @@ with tab_qualy:
             st.markdown(f"""
 <div class="card" style="border-left: 5px solid {d_color}; position: relative; overflow: hidden; min-height: 180px;">
     <!-- Faded Driver Portrait Background -->
-    <div style="position: absolute; right: -10px; bottom: -10px; width: 120px; height: 120px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.28; mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
+    <div style="position: absolute; right: -10px; bottom: -10px; width: 135px; height: 155px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.28; mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
     <div style="position: relative; z-index: 1;">
         <div style="display: flex; justify-content: space-between;">
             <span style="font-size: 28px; font-weight: 800; color: {d_color};">P{p['predicted_position']}</span>
