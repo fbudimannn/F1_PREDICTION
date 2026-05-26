@@ -481,7 +481,8 @@ with tab_qualy:
         </div>
         <h5 style="margin: 3px 0; font-weight: 800; font-size: 16px; color: #f0f3f6;">{p['driver_name']}</h5>
         <small style="color: #8f9cae;">{p['team']}</small><br>
-        <div style="margin-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 6px;">
+        <div style="width: 55%; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px; margin-bottom: 8px;"></div>
+        <div>
             <small>🎯 <strong>Median:</strong> {format_lap_time(p['median_time'])}</small><br>
             <small>🔍 <strong>Range:</strong> {format_lap_time(p['best_case_time'])} - {format_lap_time(p['worst_case_time'])}</small>
         </div>
