@@ -11,7 +11,9 @@ venv/
 env/
 
 # FastF1 Cache
-fastf1_cache/
+fastf1_cache/fastf1_http_cache.sqlite
+fastf1_cache/**/car_data.ff1pkl
+fastf1_cache/**/position_data.ff1pkl
 
 # IDE
 .vscode/
