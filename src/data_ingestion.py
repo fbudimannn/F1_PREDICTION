@@ -33,6 +33,35 @@ CIRCUIT_TO_GP_NAME = {
     "saudi_arabia": "Saudi Arabian Grand Prix",
 }
 
+# Official offline calendar database for the 2026 season to guarantee robust, 
+# zero-network fallback resolution on hosting servers (e.g. Streamlit Cloud)
+OFFICIAL_2026_CALENDAR = {
+    "australia": {"date": "2026-03-08", "name": "Australian Grand Prix"},
+    "china": {"date": "2026-03-15", "name": "Chinese Grand Prix"},
+    "japan": {"date": "2026-03-29", "name": "Japanese Grand Prix"},
+    "bahrain": {"date": "2026-04-12", "name": "Bahrain Grand Prix"},
+    "saudi_arabia": {"date": "2026-04-19", "name": "Saudi Arabian Grand Prix"},
+    "miami": {"date": "2026-05-03", "name": "Miami Grand Prix"},
+    "canada": {"date": "2026-05-24", "name": "Canadian Grand Prix"},
+    "monaco": {"date": "2026-06-07", "name": "Monaco Grand Prix"},
+    "barcelona": {"date": "2026-06-14", "name": "Spanish Grand Prix"},
+    "austria": {"date": "2026-06-28", "name": "Austrian Grand Prix"},
+    "great_britain": {"date": "2026-07-05", "name": "British Grand Prix"},
+    "belgium": {"date": "2026-07-19", "name": "Belgian Grand Prix"},
+    "hungary": {"date": "2026-07-26", "name": "Hungarian Grand Prix"},
+    "netherlands": {"date": "2026-08-23", "name": "Dutch Grand Prix"},
+    "italy": {"date": "2026-09-06", "name": "Italian Grand Prix"},
+    "spain_madrid": {"date": "2026-09-13", "name": "Spanish Grand Prix"},
+    "azerbaijan": {"date": "2026-09-27", "name": "Azerbaijan Grand Prix"},
+    "singapore": {"date": "2026-10-11", "name": "Singapore Grand Prix"},
+    "united_states": {"date": "2026-10-25", "name": "United States Grand Prix"},
+    "mexico": {"date": "2026-11-01", "name": "Mexico City Grand Prix"},
+    "brazil": {"date": "2026-11-08", "name": "São Paulo Grand Prix"},
+    "las_vegas": {"date": "2026-11-21", "name": "Las Vegas Grand Prix"},
+    "qatar": {"date": "2026-11-29", "name": "Qatar Grand Prix"},
+    "abu_dhabi": {"date": "2026-12-06", "name": "Abu Dhabi Grand Prix"}
+}
+
 def get_race_status(circuit_id):
     """
     Determines the status of a Grand Prix for the given circuit:
@@ -40,20 +69,84 @@ def get_race_status(circuit_id):
       - ONGOING: Race is currently in progress (live lap data streaming)
       - SOON: Race has not started yet (show scheduled date/time)
     
-    Returns dict with keys: status, event_date, event_name, latest_lap, total_laps
+    Uses an offline-first 2026 calendar database to resolve statuses reliably
+    independent of network/proxy blocks on hosting servers, with live FastF1
+    override attempts.
     """
     gp_name = CIRCUIT_TO_GP_NAME.get(circuit_id, circuit_id.replace('_', ' ').title())
     total_laps = CIRCUITS[circuit_id]["laps"]
     
+    # 1. Offline-First Calendar Resolution (guarantees robust cloud execution)
+    if circuit_id in OFFICIAL_2026_CALENDAR:
+        event_info = OFFICIAL_2026_CALENDAR[circuit_id]
+        event_date_str = event_info["date"]
+        event_name = event_info["name"]
+        
+        # Parse official race Sunday date (UTC)
+        event_date = datetime.strptime(event_date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        
+        # Race typically starts ~14:00 local/UTC and lasts ~2 hours
+        race_start = event_date + timedelta(hours=14)
+        race_end = race_start + timedelta(hours=2, minutes=30)
+        
+        now = datetime.now(timezone.utc)
+        
+        if now > race_end:
+            # Race is completed
+            latest_lap = total_laps
+            try:
+                import fastf1
+                fastf1.Cache.enable_cache('fastf1_cache')
+                session = fastf1.get_session(2026, event_name, 'R')
+                session.load(telemetry=False, weather=False)
+                if len(session.laps) > 0:
+                    latest_lap = int(session.laps['LapNumber'].max())
+            except:
+                pass
+                
+            return {
+                "status": "DONE",
+                "event_date": event_date_str,
+                "event_name": event_name,
+                "latest_lap": latest_lap,
+                "total_laps": total_laps
+            }
+            
+        elif now >= race_start and now <= race_end:
+            # Race is currently ongoing/live
+            latest_lap = get_latest_available_lap(circuit_id)
+            if latest_lap is None:
+                # Fallback estimation based on elapsed race time (average ~1.6 mins per lap)
+                elapsed_minutes = (now - race_start).total_seconds() / 60.0
+                estimated_lap = int(elapsed_minutes / 1.6)
+                latest_lap = np.clip(estimated_lap, 1, total_laps)
+                
+            return {
+                "status": "ONGOING",
+                "event_date": event_date_str,
+                "event_name": event_name,
+                "latest_lap": latest_lap,
+                "total_laps": total_laps
+            }
+            
+        else:
+            # Race is upcoming
+            return {
+                "status": "SOON",
+                "event_date": event_date_str,
+                "event_name": event_name,
+                "latest_lap": None,
+                "total_laps": total_laps
+            }
+
+    # 2. Live API fallback if circuit is not in our 2026 database (legacy/extra circuits)
     try:
         import fastf1
         fastf1.Cache.enable_cache('fastf1_cache')
         
         schedule = fastf1.get_event_schedule(2026)
-        # Find matching event row
         event_row = schedule[schedule['EventName'] == gp_name]
         if len(event_row) == 0:
-            # Try partial match
             event_row = schedule[schedule['EventName'].str.contains(gp_name.split(' ')[0], case=False)]
         
         if len(event_row) == 0:
@@ -70,16 +163,11 @@ def get_race_status(circuit_id):
         event_name = event_row['EventName']
         
         now = datetime.now(timezone.utc)
-        
-        # Race day: EventDate is the Sunday of the race weekend
-        # Race typically starts ~14:00 local and lasts ~2 hours
         race_start_estimate = event_date.to_pydatetime().replace(tzinfo=timezone.utc) + timedelta(hours=14)
         race_end_estimate = race_start_estimate + timedelta(hours=2, minutes=30)
         
         if now > race_end_estimate:
-            # Race is finished
             latest_lap = total_laps
-            # Try to verify with actual data
             try:
                 session = fastf1.get_session(2026, gp_name, 'R')
                 session.load(telemetry=False, weather=False)
@@ -96,7 +184,6 @@ def get_race_status(circuit_id):
                 "total_laps": total_laps
             }
         elif now >= race_start_estimate and now <= race_end_estimate:
-            # Race is currently ongoing
             latest_lap = get_latest_available_lap(circuit_id)
             return {
                 "status": "ONGOING",
@@ -106,7 +193,6 @@ def get_race_status(circuit_id):
                 "total_laps": total_laps
             }
         else:
-            # Race hasn't started yet
             return {
                 "status": "SOON",
                 "event_date": str(event_date.date()),
@@ -116,7 +202,6 @@ def get_race_status(circuit_id):
             }
     
     except Exception as e:
-        # If FastF1 unavailable, default to SOON
         return {
             "status": "SOON",
             "event_date": "TBD",
