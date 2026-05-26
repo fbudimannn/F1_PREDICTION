@@ -691,72 +691,104 @@ if race_status["status"] == "ONGOING":
             
     live_auto_refresh()
 
-# 8. Floating Music Player Widget
+# 8. Floating Music Player Widget (Embedded inside Iframe for CSP bypass)
+st.markdown("""
+<style>
+    /* Float the entire Streamlit component container to the bottom-right */
+    div[data-testid="stHtml"] {
+        position: fixed !important;
+        bottom: 80px !important;
+        right: 20px !important;
+        z-index: 999999 !important;
+        width: 155px !important;
+        height: 52px !important;
+        background: transparent !important;
+        border: none !important;
+    }
+    
+    /* Ensure the iframe inside fills the container and has no borders */
+    div[data-testid="stHtml"] iframe {
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        background: transparent !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 music_player_html = """
-<div id="music-player-container" style="position: fixed; bottom: 80px; right: 20px; background: rgba(18, 21, 28, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255, 24, 1, 0.3); padding: 8px 12px; border-radius: 30px; display: flex; align-items: center; gap: 8px; z-index: 999999; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); transition: all 0.3s ease;">
-<button id="music-play-btn" style="background: #ff1801; border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: transform 0.2s ease, background 0.2s ease; outline: none;">▶</button>
-<div id="music-volume-container" style="display: flex; align-items: center; gap: 5px; width: 0; overflow: hidden; transition: width 0.3s ease;">
-<span style="color: #8f9cae; font-size: 11px;">🔊</span>
-<input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.2" style="width: 60px; cursor: pointer; accent-color: #ff1801;">
+<html style="overflow: hidden; background: transparent; margin: 0; padding: 0; height: 100%; width: 100%;">
+<body style="margin: 0; padding: 0; background: transparent; height: 100%; width: 100%; display: flex; align-items: center;">
+<div id="music-player-container" style="display: flex; align-items: center; gap: 8px; background: rgba(18, 21, 28, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 24, 1, 0.3); padding: 8px 12px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); width: fit-content; box-sizing: border-box;">
+    <button id="music-play-btn" style="background: #ff1801; border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none; transition: background 0.2s ease; padding: 0;">
+        <!-- Play Icon (Default) -->
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <div id="music-volume-container" style="display: flex; align-items: center; gap: 5px;">
+        <span style="display: flex; align-items: center; justify-content: center; color: #8f9cae;">
+            <!-- Speaker Icon -->
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        </span>
+        <input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.2" style="width: 50px; cursor: pointer; accent-color: #ff1801; margin: 0; padding: 0;">
+    </div>
+    <audio id="bg-audio" loop></audio>
 </div>
-<audio id="bg-audio" loop>
-<source src="app/static/F1.mp3" type="audio/mp3">
-<source src="static/F1.mp3" type="audio/mp3">
-</audio>
-</div>
-<img src="x" onerror="
-const runMusicSetup = () => {
-const existingPlayer = document.querySelector('body > #music-player-container');
-const newPlayer = document.getElementById('music-player-container');
-if (existingPlayer) {
-if (newPlayer && newPlayer !== existingPlayer) {
-newPlayer.remove();
-}
-return;
-}
-if (newPlayer) {
-document.body.appendChild(newPlayer);
-const audio = document.getElementById('bg-audio');
-const playBtn = document.getElementById('music-play-btn');
-const volumeSlider = document.getElementById('music-volume');
-const volumeContainer = document.getElementById('music-volume-container');
-audio.volume = 0.2;
-newPlayer.addEventListener('mouseenter', () => {
-volumeContainer.style.width = '90px';
-});
-newPlayer.addEventListener('mouseleave', () => {
-volumeContainer.style.width = '0';
-});
-function setPlayingUI() {
-playBtn.innerHTML = '⏸';
-playBtn.style.background = '#00D2BE';
-}
-function setPausedUI() {
-playBtn.innerHTML = '▶';
-playBtn.style.background = '#ff1801';
-}
-playBtn.addEventListener('click', () => {
-if (audio.paused) {
-audio.play().then(() => {
-setPlayingUI();
-}).catch(err => {
-console.log('Play failed:', err);
-});
-} else {
-audio.pause();
-setPausedUI();
-}
-});
-volumeSlider.addEventListener('input', (e) => {
-audio.volume = e.target.value;
-});
-setPausedUI();
-}
-};
-runMusicSetup();
-this.remove();
-">
+
+<script>
+    const audio = document.getElementById('bg-audio');
+    const playBtn = document.getElementById('music-play-btn');
+    const volumeSlider = document.getElementById('music-volume');
+
+    // Resolve parent window's origin to load static audio from the correct domain
+    let parentOrigin = window.location.origin;
+    if (document.referrer) {
+        try {
+            parentOrigin = new URL(document.referrer).origin;
+        } catch(e) {
+            console.error("Failed to parse referrer origin:", e);
+        }
+    }
+    audio.src = parentOrigin + "/static/F1.mp3";
+    audio.volume = 0.2;
+
+    const playIconHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+    const pauseIconHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+
+    function setPlayingUI() {
+        playBtn.innerHTML = pauseIconHTML;
+        playBtn.style.background = '#00D2BE';
+    }
+    
+    function setPausedUI() {
+        playBtn.innerHTML = playIconHTML;
+        playBtn.style.background = '#ff1801';
+    }
+
+    playBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play().then(() => {
+                setPlayingUI();
+            }).catch(err => {
+                console.error("Audio play failed:", err);
+            });
+        } else {
+            audio.pause();
+            setPausedUI();
+        }
+    });
+
+    volumeSlider.addEventListener('input', (e) => {
+        audio.volume = e.target.value;
+    });
+
+    // Initialize UI state
+    setPausedUI();
+</script>
+</body>
+</html>
 """
-st.markdown(music_player_html, unsafe_allow_html=True)
+import streamlit.components.v1 as components
+components.html(music_player_html, height=52)
+
 
 
