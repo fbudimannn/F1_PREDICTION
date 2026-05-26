@@ -619,25 +619,41 @@ with tab_race:
     # Probability breakdown table
     st.markdown("#### Full Probability Breakdown Table")
     
-    # Format table with premium team heart emojis
-    df_display = df_sim_sorted.copy()
-    team_emojis = {
-        "Mercedes": "🩵",
-        "McLaren": "🧡",
-        "Ferrari": "❤️",
-        "Red Bull": "💙",
-        "Williams": "💙",
-        "Haas": "🤍",
-        "Audi": "❤️",
-        "VCARB": "💙",
-        "Aston Martin": "💚",
-        "Cadillac": "🩶",
-        "Alpine": "💙"
-    }
-    df_display["team"] = df_display["team"].apply(lambda t: f"{team_emojis.get(t, '🏁')} {t}")
-    
     st.dataframe(
-        df_display[["driver_code", "driver_name", "team", "win_probability", "podium_probability", "top10_probability", "dnf_probability"]],
+        df_sim_sorted[["driver_code", "driver_name", "team", "win_probability", "podium_probability", "top10_probability", "dnf_probability"]],
+        column_config={
+            "driver_code": st.column_config.TextColumn("Code"),
+            "driver_name": st.column_config.TextColumn("Driver Name"),
+            "team": st.column_config.TextColumn("Team"),
+            "win_probability": st.column_config.ProgressColumn(
+                "Win Prob",
+                help="Probability of winning the race",
+                format="%.1f%%",
+                min_value=0.0,
+                max_value=100.0,
+            ),
+            "podium_probability": st.column_config.ProgressColumn(
+                "Podium Prob",
+                help="Probability of finishing on the podium",
+                format="%.1f%%",
+                min_value=0.0,
+                max_value=100.0,
+            ),
+            "top10_probability": st.column_config.ProgressColumn(
+                "Top 10 Prob",
+                help="Probability of finishing in the top 10",
+                format="%.1f%%",
+                min_value=0.0,
+                max_value=100.0,
+            ),
+            "dnf_probability": st.column_config.ProgressColumn(
+                "DNF Prob",
+                help="Probability of retiring from the race",
+                format="%.1f%%",
+                min_value=0.0,
+                max_value=100.0,
+            )
+        },
         use_container_width=True,
         hide_index=True
     )
