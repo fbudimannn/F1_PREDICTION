@@ -1,6 +1,6 @@
 # 🏎️ F1 Bayesian Predictor & Live Tracker 2026
 
-[![Streamlit App](https://static.streamlit.io/badge_svg.svg)](https://share.streamlit.io/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://f1predict.streamlit.app/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-red.svg)](https://www.python.org/)
 [![FastF1](https://img.shields.io/badge/API-FastF1-orange.svg)](https://github.com/theOehrly/FastF1)
 
