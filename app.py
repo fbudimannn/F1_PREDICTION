@@ -326,7 +326,7 @@ with tab_telemetry:
             plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
         )
-        st.plotly_chart(fig, width='stretch')
+        st.plotly_chart(fig, use_container_width=True)
 
 # ==========================================
 # TAB 2: QUALIFYING GRID PREDICTOR
@@ -378,7 +378,7 @@ with tab_qualy:
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
         )
-        st.plotly_chart(fig_q, width='stretch')
+        st.plotly_chart(fig_q, use_container_width=True)
         
     # Render final grid table
     st.markdown("#### Predicted Q3 Final Starting Grid")
@@ -604,13 +604,13 @@ with tab_race:
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
     )
-    st.plotly_chart(fig_bar, width='stretch')
+    st.plotly_chart(fig_bar, use_container_width=True)
     
     # Probability breakdown table
     st.markdown("#### Full Probability Breakdown Table")
     st.dataframe(
         df_sim_sorted[["driver_code", "driver_name", "team", "win_probability", "podium_probability", "top10_probability", "dnf_probability"]],
-        width='stretch',
+        use_container_width=True,
         hide_index=True
     )
 
