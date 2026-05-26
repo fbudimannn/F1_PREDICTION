@@ -29,17 +29,17 @@ GRID_2026 = {
 # 2026 Constructor Pace Offsets (seconds delta)
 # Reflects actual 2026 hierarchy: Mercedes consistently dominant, McLaren/Ferrari close behind, Red Bull inconsistent (kureng / fourth best)
 CONSTRUCTORS_2026 = {
-    "Mercedes": {"pace_offset": -0.65},      # Mercedes dominant sasis/engine package
-    "McLaren": {"pace_offset": -0.55},       # Consistent close challenger
-    "Ferrari": {"pace_offset": -0.50},       # Elite third-force challenger
-    "Red Bull": {"pace_offset": -0.15},      # Red Bull is "kureng" / highly inconsistent
-    "Williams": {"pace_offset": -0.10},
-    "Haas": {"pace_offset": 0.05},
-    "Audi": {"pace_offset": 0.15},
-    "VCARB": {"pace_offset": 0.25},
-    "Aston Martin": {"pace_offset": 0.35},  # Aston Martin struggles package
-    "Cadillac": {"pace_offset": 0.45},
-    "Alpine": {"pace_offset": 0.50}
+    "Mercedes": {"pace_offset": -0.65, "color": "#00D2BE"},      # Mercedes teal
+    "McLaren": {"pace_offset": -0.55, "color": "#FF8700"},       # McLaren papaya orange
+    "Ferrari": {"pace_offset": -0.50, "color": "#EF1A2D"},       # Ferrari rosso corsa red
+    "Red Bull": {"pace_offset": -0.15, "color": "#3671C6"},      # Red Bull blue
+    "Williams": {"pace_offset": -0.10, "color": "#005AFF"},      # Williams royal blue
+    "Haas": {"pace_offset": 0.05, "color": "#D9D9D9"},           # Haas grey
+    "Audi": {"pace_offset": 0.15, "color": "#A6F400"},           # Audi lime/neon green
+    "VCARB": {"pace_offset": 0.25, "color": "#1045E2"},          # VCARB blue
+    "Aston Martin": {"pace_offset": 0.35, "color": "#00594F"},   # Aston Martin racing green
+    "Cadillac": {"pace_offset": 0.45, "color": "#999999"},       # Cadillac silver/gray
+    "Alpine": {"pace_offset": 0.50, "color": "#0090FF"}          # Alpine blue
 }
 
 
@@ -362,3 +362,16 @@ def format_lap_time(seconds):
         return f"{minutes}:{remaining_seconds:06.3f}"
     else:
         return f"{remaining_seconds:.3f}"
+
+def get_driver_color(driver_code):
+    """
+    Returns the hex color code for a driver based on their team/constructor.
+    """
+    driver_info = GRID_2026.get(driver_code)
+    if not driver_info:
+        return "#8f9cae" # default gray
+    team_name = driver_info.get("team")
+    team_info = CONSTRUCTORS_2026.get(team_name)
+    if not team_info:
+        return "#8f9cae"
+    return team_info.get("color", "#8f9cae")

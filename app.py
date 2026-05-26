@@ -6,9 +6,16 @@ import plotly.graph_objects as go
 import os
 import json
 import time
-from src.utils import GRID_2026, CIRCUITS, get_initial_driver_priors, update_elo_ratings, format_lap_time
+from src.utils import GRID_2026, CIRCUITS, get_initial_driver_priors, update_elo_ratings, format_lap_time, get_driver_color
 from src.data_ingestion import fetch_gp_practice_data, fetch_live_session_timing, fetch_actual_qualifying_results, get_race_status
 from src.models import QualifyingModel, MonteCarloSimulator
+
+def hex_to_rgba(hex_str, alpha):
+    hex_str = hex_str.lstrip('#')
+    r = int(hex_str[0:2], 16)
+    g = int(hex_str[2:4], 16)
+    b = int(hex_str[4:6], 16)
+    return f"rgba({r},{g},{b},{alpha})"
 
 # 1. Page Configuration & Layout
 st.set_page_config(
@@ -314,8 +321,8 @@ with tab_telemetry:
         speed_b = np.clip(speed_b, 80, 350)
         
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=distance, y=speed_a, name=f"{GRID_2026[driver_a]['name']} ({driver_a})", line=dict(color='#ff1801', width=3)))
-        fig.add_trace(go.Scatter(x=distance, y=speed_b, name=f"{GRID_2026[driver_b]['name']} ({driver_b})", line=dict(color='#00e5ff', width=3, dash='dash')))
+        fig.add_trace(go.Scatter(x=distance, y=speed_a, name=f"{GRID_2026[driver_a]['name']} ({driver_a})", line=dict(color=get_driver_color(driver_a), width=3)))
+        fig.add_trace(go.Scatter(x=distance, y=speed_b, name=f"{GRID_2026[driver_b]['name']} ({driver_b})", line=dict(color=get_driver_color(driver_b), width=3, dash='dash')))
         
         fig.update_layout(
             title="Telemetry Speed Curve Comparison (Circuit Lap)",
@@ -354,19 +361,21 @@ with tab_qualy:
         # Plot predicted qualifying times (Quantile intervals) using full driver names
         fig_q = go.Figure()
         
+        colors_list = [get_driver_color(code) for code in df_qualy["driver_code"]]
+
         # Render confidence intervals as error bars or custom ranges
         fig_q.add_trace(go.Scatter(
             x=df_qualy["driver_name"],
             y=df_qualy["median_time"],
             mode='markers',
             name='Predicted Median Time',
-            marker=dict(color='#ff1801', size=10),
+            marker=dict(color=colors_list, size=10),
             error_y=dict(
                 type='data',
                 symmetric=False,
                 array=df_qualy["worst_case_time"] - df_qualy["median_time"],
                 arrayminus=df_qualy["median_time"] - df_qualy["best_case_time"],
-                color='#ff8c80'
+                color='#8f9cae'
             )
         ))
         
@@ -390,11 +399,12 @@ with tab_qualy:
             # Generate simulated SHAP text
             shap_fp3 = -0.08 if p["predicted_position"] <= 3 else 0.04
             shap_elo = -0.05 if st.session_state.driver_priors[p["driver_code"]] > 1700 else 0.02
+            d_color = get_driver_color(p["driver_code"])
             
             st.markdown(f"""
-            <div class='card' style='border-left: 5px solid #ff1801;'>
+            <div class='card' style='border-left: 5px solid {d_color};'>
                 <div style='display: flex; justify-content: space-between;'>
-                    <span style='font-size: 28px; font-weight: 800; color: #ff1801;'>P{p['predicted_position']}</span>
+                    <span style='font-size: 28px; font-weight: 800; color: {d_color};'>P{p['predicted_position']}</span>
                     <span style='font-size: 14px; font-weight: 600; color: #8f9cae;'>{p['driver_code']}</span>
                 </div>
                 <h4 style='margin: 5px 0;'>{p['driver_name']}</h4>
@@ -403,7 +413,7 @@ with tab_qualy:
                     <small>🎯 <strong>Median Time:</strong> {format_lap_time(p['median_time'])}</small><br>
                     <small>🔍 <strong>Range:</strong> {format_lap_time(p['best_case_time'])} - {format_lap_time(p['worst_case_time'])}</small>
                 </div>
-                <div style='margin-top: 5px; font-size: 10px; color: #00e5ff;'>
+                <div style='margin-top: 5px; font-size: 10px; color: {d_color}; opacity: 0.8;'>
                     ✨ <strong>SHAP Impact:</strong> S1-S3 ({shap_fp3:.2f}s) | Prior ({shap_elo:.2f}s)
                 </div>
             </div>
@@ -575,24 +585,29 @@ with tab_race:
     st.markdown("#### Predicted Race Finish Probability (Top 10)")
     
     # Plotly probability bar chart using beautiful full driver names
+    top10_drivers = df_sim_sorted["driver_code"][:10]
+    win_colors = [hex_to_rgba(get_driver_color(code), 1.0) for code in top10_drivers]
+    podium_colors = [hex_to_rgba(get_driver_color(code), 0.65) for code in top10_drivers]
+    top10_colors = [hex_to_rgba(get_driver_color(code), 0.3) for code in top10_drivers]
+
     fig_bar = go.Figure()
     fig_bar.add_trace(go.Bar(
         x=df_sim_sorted["driver_name"][:10],
         y=df_sim_sorted["win_probability"][:10],
         name="Win Chance %",
-        marker_color='#ff1801'
+        marker_color=win_colors
     ))
     fig_bar.add_trace(go.Bar(
         x=df_sim_sorted["driver_name"][:10],
         y=df_sim_sorted["podium_probability"][:10],
         name="Podium Chance %",
-        marker_color='#00e5ff'
+        marker_color=podium_colors
     ))
     fig_bar.add_trace(go.Bar(
         x=df_sim_sorted["driver_name"][:10],
         y=df_sim_sorted["top10_probability"][:10],
         name="Top 10 Chance %",
-        marker_color='#8f9cae'
+        marker_color=top10_colors
     ))
     
     fig_bar.update_layout(
