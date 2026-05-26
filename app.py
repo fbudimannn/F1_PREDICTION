@@ -748,7 +748,30 @@ music_player_html = """
             console.error("Failed to parse referrer origin:", e);
         }
     }
-    audio.src = parentOrigin + "/static/F1.mp3";
+
+    // Fallback paths list for loading static assets in Streamlit
+    const audioPaths = [
+        "/app/static/F1.mp3",
+        "/static/F1.mp3"
+    ];
+    let pathIndex = 0;
+
+    function loadAudioSource() {
+        audio.src = parentOrigin + audioPaths[pathIndex];
+        console.log("Loading audio from source:", audio.src);
+    }
+
+    audio.addEventListener('error', (e) => {
+        console.error("Failed to load audio from:", audio.src);
+        if (pathIndex < audioPaths.length - 1) {
+            pathIndex++;
+            console.log("Retrying with fallback path:", audioPaths[pathIndex]);
+            loadAudioSource();
+        }
+    });
+
+    // Initialize source and volume
+    loadAudioSource();
     audio.volume = 0.2;
 
     const playIconHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
