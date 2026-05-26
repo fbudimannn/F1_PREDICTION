@@ -31,11 +31,11 @@ GRID_2026 = {
 CONSTRUCTORS_2026 = {
     "Mercedes": {"pace_offset": -0.65, "color": "#00D2BE"},      # Mercedes teal
     "McLaren": {"pace_offset": -0.55, "color": "#FF8700"},       # McLaren papaya orange
-    "Ferrari": {"pace_offset": -0.50, "color": "#EF1A2D"},       # Ferrari rosso corsa red
+    "Ferrari": {"pace_offset": -0.50, "color": "#C40000"},       # Ferrari deep scuderia red
     "Red Bull": {"pace_offset": -0.15, "color": "#3671C6"},      # Red Bull blue
     "Williams": {"pace_offset": -0.10, "color": "#005AFF"},      # Williams royal blue
     "Haas": {"pace_offset": 0.05, "color": "#D9D9D9"},           # Haas grey
-    "Audi": {"pace_offset": 0.15, "color": "#FF1A00"},           # Audi Lava Red
+    "Audi": {"pace_offset": 0.15, "color": "#FF4D00"},           # Audi Lava Orange-Red
     "VCARB": {"pace_offset": 0.25, "color": "#1045E2"},          # VCARB blue
     "Aston Martin": {"pace_offset": 0.35, "color": "#00594F"},   # Aston Martin racing green
     "Cadillac": {"pace_offset": 0.45, "color": "#999999"},       # Cadillac silver/gray
