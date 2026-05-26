@@ -705,23 +705,26 @@ music_player_html = """
 </audio>
 </div>
 <script>
+(function() {
+const existingPlayer = document.querySelector('body > #music-player-container');
+const newPlayer = document.getElementById('music-player-container');
+if (existingPlayer) {
+if (newPlayer && newPlayer !== existingPlayer) {
+newPlayer.remove();
+}
+return;
+}
+if (newPlayer) {
+document.body.appendChild(newPlayer);
 const audio = document.getElementById('bg-audio');
 const playBtn = document.getElementById('music-play-btn');
 const volumeSlider = document.getElementById('music-volume');
 const volumeContainer = document.getElementById('music-volume-container');
-const playerContainer = document.getElementById('music-player-container');
-const storedVolume = localStorage.getItem('f1_music_volume');
-const storedPlaying = localStorage.getItem('f1_music_playing');
-if (storedVolume !== null) {
-audio.volume = parseFloat(storedVolume);
-volumeSlider.value = storedVolume;
-} else {
 audio.volume = 0.2;
-}
-playerContainer.addEventListener('mouseenter', () => {
+newPlayer.addEventListener('mouseenter', () => {
 volumeContainer.style.width = '90px';
 });
-playerContainer.addEventListener('mouseleave', () => {
+newPlayer.addEventListener('mouseleave', () => {
 volumeContainer.style.width = '0';
 });
 function setPlayingUI() {
@@ -732,35 +735,24 @@ function setPausedUI() {
 playBtn.innerHTML = '▶';
 playBtn.style.background = '#ff1801';
 }
-if (storedPlaying === 'true') {
-audio.play().then(() => {
-setPlayingUI();
-}).catch(err => {
-console.log("Autoplay blocked:", err);
-localStorage.setItem('f1_music_playing', 'false');
-setPausedUI();
-});
-} else {
-setPausedUI();
-}
 playBtn.addEventListener('click', () => {
 if (audio.paused) {
 audio.play().then(() => {
 setPlayingUI();
-localStorage.setItem('f1_music_playing', 'true');
 }).catch(err => {
 console.log("Play failed:", err);
 });
 } else {
 audio.pause();
 setPausedUI();
-localStorage.setItem('f1_music_playing', 'false');
 }
 });
 volumeSlider.addEventListener('input', (e) => {
 audio.volume = e.target.value;
-localStorage.setItem('f1_music_volume', e.target.value);
 });
+setPausedUI();
+}
+})();
 </script>
 """
 st.markdown(music_player_html, unsafe_allow_html=True)
