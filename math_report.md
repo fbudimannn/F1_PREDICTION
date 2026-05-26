@@ -45,7 +45,7 @@ Before each race weekend, every driver carries a **Prior ELO rating** representi
 
 Each driver's base prior is defined in `src/utils.py`:
 
-$$\text{Prior}_{\text{driver}} = \text{base\_elo} + \text{junior\_bonus}$$
+$$\text{Prior}_{\text{driver}} = \text{base-elo} + \text{junior-bonus}$$
 
 | Driver | Base ELO | Junior Bonus | Effective Prior |
 |---|---|---|---|
@@ -135,7 +135,7 @@ $$S_{ELO}^{ANT} = \frac{1875 - 1300}{700} = \frac{575}{700} = \mathbf{0.821}$$
 
 Normalized from constructor pace offsets (range −0.65 → +0.50, lower is faster):
 
-$$S_{car} = \text{clip}\left(\frac{-\text{pace\_offset} + 0.50}{1.15}, 0, 1\right)$$
+$$S_{car} = \text{clip}\left(\frac{-\text{pace-offset} + 0.50}{1.15}, 0, 1\right)$$
 
 | Team | Pace Offset | $S_{car}$ |
 |---|---|---|
@@ -179,7 +179,7 @@ $$\varepsilon \sim \mathcal{N}(0, \sigma^2), \quad \sigma = 0.025$$
 
 After scoring, the LightGBM Ranker fine-tunes the relative ordering using the following feature vector:
 
-$$\mathbf{x} = [\text{fp3\_avg}, \text{speed\_trap}, \text{track\_temp}, \text{driver\_elo}, \text{tyre\_code}, \text{rain\_intensity}]$$
+$$\mathbf{x} = [\text{fp3-avg}, \text{speed-trap}, \text{track-temp}, \text{driver-elo}, \text{tyre-code}, \text{rain-intensity}]$$
 
 **Objective:** Maximize NDCG (Normalized Discounted Cumulative Gain):
 
@@ -220,7 +220,7 @@ $$t_{pole} = L_{km} \times s_{type}$$
 
 $$\Delta t_{rank} = \frac{0.12}{1 + rank \times 0.04} \times U[0.7, 1.3] \times g_{weather}$$
 
-Where $g_{weather} = 1.0 + 1.5 \times rain\_intensity$
+Where $g_{weather} = 1.0 + 1.5 \times \text{rain-intensity}$
 
 **Credible Interval width:**
 
@@ -253,7 +253,7 @@ The simulator creates matrices of shape $(N_{sims}, N_{drivers})$:
 
 For each driver $d$ in each simulation:
 
-$$\boxed{T_{base,d} = 72.5 - (ELO_d - 1500) \times 0.003 + \text{pace\_offset}_d + \Delta_{weather}}$$
+$$\boxed{T_{base,d} = 72.5 - (ELO_d - 1500) \times 0.003 + \text{pace-offset}_d + \Delta_{weather}}$$
 
 Where $\Delta_{weather}$: Dry = 0.0s, Damp = +8.0s, Wet = +16.0s
 
