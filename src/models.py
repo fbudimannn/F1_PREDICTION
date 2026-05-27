@@ -361,6 +361,12 @@ class MonteCarloSimulator:
         if active_state is not None:
             tyre_ages += np.array(active_state["tyre_ages"])
             pit_stops += np.array(active_state["pit_stops"])
+            # Initialize tyre compounds to the index matching the number of pit stops completed
+            for idx, d in enumerate(starting_grid):
+                pits = active_state["pit_stops"][idx]
+                strat = tyre_strategies.get(d, ["Medium", "Hard"])
+                tyre_compounds[:, idx] = np.clip(pits, 0, len(strat) - 1)
+                
             if "dnfs" in active_state:
                 for dnf_driver in active_state["dnfs"]:
                     if dnf_driver in starting_grid:

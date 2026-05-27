@@ -57,6 +57,29 @@ def hex_to_rgba(hex_str, alpha):
     b = int(hex_str[4:6], 16)
     return f"rgba({r},{g},{b},{alpha})"
 
+def parse_strategy(strat_str):
+    mapping = {
+        's': 'Soft', 'm': 'Medium', 'h': 'Hard', 'i': 'Intermediate', 'w': 'Wet',
+        'soft': 'Soft', 'medium': 'Medium', 'hard': 'Hard', 'intermediate': 'Intermediate', 'wet': 'Wet'
+    }
+    cleaned = strat_str.replace(',', '-').replace('>', '-').replace(' ', '-')
+    tokens = [t.strip().lower() for t in cleaned.split('-') if t.strip()]
+    parsed = []
+    for t in tokens:
+        if t in mapping:
+            parsed.append(mapping[t])
+        else:
+            for char in t:
+                if char in mapping:
+                    parsed.append(mapping[char])
+    if not parsed:
+        return ["Medium", "Hard"]
+    return parsed
+
+def render_html(html_str):
+    cleaned_html = "\n".join(line.lstrip() for line in html_str.splitlines())
+    st.markdown(cleaned_html, unsafe_allow_html=True)
+
 # 1. Page Configuration & Layout
 st.set_page_config(
     page_title="F1 Bayesian Predictor & Live Tracker",
@@ -68,11 +91,11 @@ st.set_page_config(
 # 2. Premium CSS Injector (Asphalt Carbon & Neon Red Glassmorphism)
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
     
     /* Global Styles */
     html, body, [class*="css"] {
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Poppins', sans-serif;
     }
     
     .stApp {
@@ -143,6 +166,8 @@ st.markdown("""
     .badge-soft { background-color: #ff1801; color: white; }
     .badge-medium { background-color: #ffcc00; color: black; }
     .badge-hard { background-color: #ffffff; color: black; }
+    .badge-intermediate { background-color: #00e5ff; color: black; }
+    .badge-wet { background-color: #0090ff; color: white; }
     
     /* Race Status Badges */
     .badge-done {
@@ -187,7 +212,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 3. Sidebar Configuration
-st.sidebar.markdown(f"<h1 class='neon-text-red' style='font-size: 28px; margin-bottom: 20px;'>F1 PREDICTOR Pro</h1>", unsafe_allow_html=True)
+if os.path.exists("logo f1.png"):
+    st.sidebar.image("logo f1.png", use_container_width=True)
+st.sidebar.markdown(f"<h1 class='neon-text-red' style='font-size: 28px; margin-top: 10px; margin-bottom: 20px;'>F1 PREDICTOR Pro</h1>", unsafe_allow_html=True)
 
 # Circuit Selection
 active_circuit = st.sidebar.selectbox(
@@ -348,7 +375,7 @@ with tab_telemetry:
             color_b = get_driver_color(driver_b)
             
             # Show a beautiful VS layout with pictures
-            st.markdown(f"""
+            render_html(f"""
 <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 15px; margin-bottom: 15px; background: rgba(22, 26, 34, 0.5); padding: 15px 10px; border-radius: 10px; border: 1px solid rgba(255, 24, 1, 0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
     <div style="text-align: center; width: 45%;">
         <div style="position: relative; display: inline-block;">
@@ -357,7 +384,7 @@ with tab_telemetry:
         <div style="font-weight: 800; font-size: 13px; margin-top: 6px; color: #f0f3f6;">{driver_a}</div>
         <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_a]['name']}</div>
     </div>
-    <div style="font-weight: 800; font-size: 16px; color: #ff1801; text-shadow: 0 0 10px rgba(255,24,1,0.6); font-family: 'Outfit', sans-serif;">VS</div>
+    <div style="font-weight: 800; font-size: 16px; color: #ff1801; text-shadow: 0 0 10px rgba(255,24,1,0.6); font-family: 'Poppins', sans-serif;">VS</div>
     <div style="text-align: center; width: 45%;">
         <div style="position: relative; display: inline-block;">
             <img src="{img_b}" style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid {color_b}; object-fit: cover; object-position: center top; box-shadow: 0 0 12px {color_b}88; background-color: #12151c;">
@@ -366,7 +393,7 @@ with tab_telemetry:
         <div style="font-size: 10px; color: #8f9cae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{GRID_2026[driver_b]['name']}</div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""")
             
             st.markdown(f"<br><strong>{loaded_session} Average Lap Times:</strong>", unsafe_allow_html=True)
             st.write(f"🏎️ **{driver_a}:** {format_lap_time(fp3_times[driver_a])}")
@@ -461,7 +488,7 @@ with tab_qualy:
     st.markdown("#### Predicted Q3 Final Starting Grid")
     
     grid_cols = st.columns(4)
-    for idx, p in enumerate(qualy_results[:12]): # Display top 12
+    for idx, p in enumerate(qualy_results): # Display all predicted drivers on the grid
         col_idx = idx % 4
         with grid_cols[col_idx]:
             # Generate simulated SHAP text
@@ -470,10 +497,10 @@ with tab_qualy:
             d_color = get_driver_color(p["driver_code"])
             driver_img = get_driver_image_base64(p["driver_code"])
             
-            st.markdown(f"""
+            render_html(f"""
 <div class="card" style="border-left: 5px solid {d_color}; position: relative; overflow: hidden; min-height: 180px;">
     <!-- Faded Driver Portrait Background -->
-    <div style="position: absolute; right: -10px; bottom: -10px; width: 135px; height: 155px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.28; mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
+    <div style="position: absolute; right: -5px; bottom: 0px; width: 145px; height: 175px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.28; mask-image: linear-gradient(to top left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to top left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
     <div style="position: relative; z-index: 1;">
         <div style="display: flex; justify-content: space-between;">
             <span style="font-size: 28px; font-weight: 800; color: {d_color};">P{p['predicted_position']}</span>
@@ -481,7 +508,7 @@ with tab_qualy:
         </div>
         <h5 style="margin: 3px 0; font-weight: 800; font-size: 16px; color: #f0f3f6;">{p['driver_name']}</h5>
         <small style="color: #8f9cae;">{p['team']}</small><br>
-        <div style="width: 55%; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px; margin-bottom: 8px;"></div>
+        <div style="width: 45%; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px; margin-bottom: 8px;"></div>
         <div>
             <small>🎯 <strong>Median:</strong> {format_lap_time(p['median_time'])}</small><br>
             <small>🔍 <strong>Range:</strong> {format_lap_time(p['best_case_time'])} - {format_lap_time(p['worst_case_time'])}</small>
@@ -491,7 +518,7 @@ with tab_qualy:
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 # ==========================================
 # TAB 3: MONTE CARLO RACE SIMULATOR
@@ -601,21 +628,43 @@ with tab_race:
                     default_idx = 0
                 else:
                     default_idx = idx % 3
-                top_5_strats[d] = st.selectbox(
+                
+                strategy_options = [
+                    "Medium-Hard", 
+                    "Soft-Medium-Medium", 
+                    "Medium-Medium-Hard", 
+                    "Soft-Hard",
+                    "Intermediate-Intermediate",
+                    "Wet-Intermediate",
+                    "Intermediate-Medium",
+                    "Soft-Intermediate-Wet",
+                    "🔧 Custom Strategy..."
+                ]
+                
+                selected_opt = st.selectbox(
                     f"{d} ({driver_name}) Strategy:", 
-                    [
-                        "Medium-Hard", 
-                        "Soft-Medium-Medium", 
-                        "Medium-Medium-Hard", 
-                        "Soft-Hard",
-                        "Intermediate-Intermediate",
-                        "Wet-Intermediate",
-                        "Intermediate-Medium",  # Edge case: wrong crossover
-                        "Soft-Intermediate-Wet"
-                    ], 
+                    strategy_options, 
                     index=default_idx,
-                    key=f"strat_{d}"
+                    key=f"strat_select_{d}"
                 )
+                
+                if selected_opt == "🔧 Custom Strategy...":
+                    custom_input = st.text_input(
+                        f"Enter custom strategy for {d} (e.g., S-M-M, M-H):", 
+                        value="Medium-Hard",
+                        key=f"strat_custom_{d}"
+                    )
+                    top_5_strats[d] = custom_input
+                else:
+                    top_5_strats[d] = selected_opt
+                
+                # Dynamic visual feedback of parsed strategy
+                parsed_compounds = parse_strategy(top_5_strats[d])
+                badge_html = ""
+                for compound in parsed_compounds:
+                    c_class = f"badge-{compound.lower()}"
+                    badge_html += f"<span class='strategy-badge {c_class}'>{compound}</span>"
+                st.markdown(f"<div style='margin-bottom: 12px;'>{badge_html}</div>", unsafe_allow_html=True)
         
     with col_c3:
         with st.container(border=True):
@@ -627,7 +676,7 @@ with tab_race:
     tyre_strategies = {}
     for d in starting_grid:
         if d in top_5_strats:
-            tyre_strategies[d] = top_5_strats[d].split("-")
+            tyre_strategies[d] = parse_strategy(top_5_strats[d])
         else:
             # Default strategy based on grid position
             tyre_strategies[d] = ["Medium", "Hard"]
@@ -682,8 +731,8 @@ with tab_race:
         p2_color = get_driver_color(p2_code)
         p3_color = get_driver_color(p3_code)
         
-        st.markdown(f"""
-<div style="display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 35px auto 25px auto; max-width: 600px; height: 260px; font-family: 'Outfit', sans-serif;">
+        render_html(f"""
+<div style="display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 35px auto 25px auto; max-width: 600px; height: 260px; font-family: 'Poppins', sans-serif;">
     <!-- P2 (Left) -->
     <div style="display: flex; flex-direction: column; align-items: center; width: 30%; max-width: 140px;">
         <div style="position: relative; text-align: center; margin-bottom: 5px;">
@@ -722,7 +771,7 @@ with tab_race:
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""")
     
     st.markdown("#### Predicted Race Finish Probability (Top 10)")
     
@@ -843,7 +892,7 @@ if os.path.exists(_mp3_path):
         _audio_bytes = _f.read()
 
     st.sidebar.markdown("---")
-    st.sidebar.markdown("""
+    render_html("""
     <div style="
         background: linear-gradient(145deg, rgba(13,15,18,0.95), rgba(30,30,42,0.95));
         border: 1px solid rgba(255,24,1,0.35);
@@ -862,7 +911,7 @@ if os.path.exists(_mp3_path):
         ">
             <span style="font-size: 16px;">🏎️</span>
             <span style="
-                font-family: 'Outfit', sans-serif;
+                font-family: 'Poppins', sans-serif;
                 font-size: 11px;
                 font-weight: 800;
                 letter-spacing: 2.5px;
@@ -887,7 +936,7 @@ if os.path.exists(_mp3_path):
             }
         </style>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # Inject CSS to style the sidebar audio element
     st.markdown("""
@@ -927,7 +976,7 @@ if os.path.exists(_mp3_path):
         section[data-testid="stSidebar"] audio::-webkit-media-controls-current-time-display,
         section[data-testid="stSidebar"] audio::-webkit-media-controls-time-remaining-display {
             color: #8f9cae !important;
-            font-family: 'Outfit', monospace !important;
+            font-family: 'Poppins', monospace !important;
             font-size: 10px !important;
         }
 
