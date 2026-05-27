@@ -98,8 +98,8 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
     
     /* Global Styles */
-    html, body, [class*="css"] {
-        font-family: 'Poppins', sans-serif;
+    html, body, [class*="css"], .stApp, p, span, div, h1, h2, h3, h4, h5, h6, select, button, input {
+        font-family: 'Poppins', sans-serif !important;
     }
     
     .stApp {
