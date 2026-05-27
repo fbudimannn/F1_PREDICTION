@@ -80,6 +80,10 @@ def render_html(html_str):
     cleaned_html = "\n".join(line.lstrip() for line in html_str.splitlines())
     st.markdown(cleaned_html, unsafe_allow_html=True)
 
+def render_sidebar_html(html_str):
+    cleaned_html = "\n".join(line.lstrip() for line in html_str.splitlines())
+    st.sidebar.markdown(cleaned_html, unsafe_allow_html=True)
+
 # 1. Page Configuration & Layout
 st.set_page_config(
     page_title="F1 Bayesian Predictor & Live Tracker",
@@ -881,7 +885,7 @@ if race_status["status"] == "ONGOING":
             
     live_auto_refresh()
 
-# 8. F1 Radio — Background Music Player (Sidebar)
+# 8. F1 Soundtrack — Background Music Player (Sidebar)
 # Placed in the sidebar because Streamlit's main content area has
 # overflow:hidden + transform that breaks position:fixed CSS.
 # The sidebar is already fixed-position, so the player is always visible.
@@ -892,7 +896,7 @@ if os.path.exists(_mp3_path):
         _audio_bytes = _f.read()
 
     st.sidebar.markdown("---")
-    render_html("""
+    render_sidebar_html("""
     <div style="
         background: linear-gradient(145deg, rgba(13,15,18,0.95), rgba(30,30,42,0.95));
         border: 1px solid rgba(255,24,1,0.35);
@@ -918,7 +922,7 @@ if os.path.exists(_mp3_path):
                 color: #ff1801;
                 text-shadow: 0 0 12px rgba(255,24,1,0.5);
                 text-transform: uppercase;
-            ">F1 RADIO</span>
+            ">F1 SOUNDTRACK</span>
             <span style="
                 margin-left: auto;
                 width: 6px;
