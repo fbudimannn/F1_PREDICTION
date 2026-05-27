@@ -98,8 +98,18 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
     
     /* Global Styles */
-    html, body, [class*="css"], .stApp, p, span, div, h1, h2, h3, h4, h5, h6, select, button, input {
+    html, body, [class*="css"], .stApp {
         font-family: 'Poppins', sans-serif !important;
+    }
+    
+    /* Target only text and input elements specifically, avoiding generic spans/divs to protect icon webfonts */
+    h1, h2, h3, h4, h5, h6, p, label, small, li, a, select, input, button, .stMetric, div[data-testid="stMetricValue"], div[data-testid="stMetricLabel"] {
+        font-family: 'Poppins', sans-serif !important;
+    }
+    
+    /* Restore font for Material Symbols & Icons to keep Streamlit collapse/expand arrows rendering correctly */
+    .notranslate, [class*="Icon"], [class*="icon"], [class*="stIcon"], [data-testid="stIcon"], [class*="material-icons"] {
+        font-family: 'Material Symbols Outlined', 'Material Symbols Rounded', 'Material Symbols Sharp', 'Material Icons' !important;
     }
     
     .stApp {
