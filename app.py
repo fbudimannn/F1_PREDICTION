@@ -304,7 +304,21 @@ if st.sidebar.button("Refresh Data & Clear Cache", help="Clears Streamlit cache 
     st.rerun()
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("<small style='color: #8f9cae;'>F1 Bayesian Predictor v1.0.0<br>2026 Grid Simulation</small>", unsafe_allow_html=True)
+credit_html = """
+<div style="font-size: 11px; color: #8f9cae; margin-bottom: 8px;">
+    F1 Bayesian Predictor v1.0.0<br>2026 Grid Simulation
+</div>
+<div style="font-size: 11px; color: #8f9cae; display: flex; align-items: center; gap: 4px; margin-top: 12px;">
+    <span>Developed by</span>
+    <a href="https://www.linkedin.com/in/muhammad-fakhri-musyaffa-budiman" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0077B5" width="12" height="12" style="margin-right: 4px; vertical-align: middle;">
+            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+        </svg>
+        Fakhri
+    </a>
+</div>
+"""
+render_sidebar_html(credit_html)
 
 # 4. Main Panel Page Title
 st.markdown(f"<h1 style='margin-bottom: 5px;'>F1 Bayesian Predictor & Live Tracker <span class='neon-text-red'>2026</span></h1>", unsafe_allow_html=True)
