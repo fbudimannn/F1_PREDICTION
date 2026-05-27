@@ -504,7 +504,7 @@ with tab_qualy:
             render_html(f"""
 <div class="card" style="border-left: 5px solid {d_color}; position: relative; overflow: hidden; min-height: 180px;">
     <!-- Faded Driver Portrait Background -->
-    <div style="position: absolute; right: -5px; bottom: 0px; width: 145px; height: 175px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.28; mask-image: linear-gradient(to top left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to top left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 0;"></div>
+    <div style="position: absolute; right: -12px; bottom: 0px; width: 130px; height: 160px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.28; mask-image: linear-gradient(to left, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 80%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 0;"></div>
     <div style="position: relative; z-index: 1;">
         <div style="display: flex; justify-content: space-between;">
             <span style="font-size: 28px; font-weight: 800; color: {d_color};">P{p['predicted_position']}</span>
@@ -513,9 +513,9 @@ with tab_qualy:
         <h5 style="margin: 3px 0; font-weight: 800; font-size: 16px; color: #f0f3f6;">{p['driver_name']}</h5>
         <small style="color: #8f9cae;">{p['team']}</small><br>
         <div style="width: 45%; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px; margin-bottom: 8px;"></div>
-        <div>
-            <small>🎯 <strong>Median:</strong> {format_lap_time(p['median_time'])}</small><br>
-            <small>🔍 <strong>Range:</strong> {format_lap_time(p['best_case_time'])} - {format_lap_time(p['worst_case_time'])}</small>
+        <div style="font-size: 11px; color: #f0f3f6; line-height: 1.45;">
+            <div>🎯 <strong>Median:</strong> {format_lap_time(p['median_time'])}</div>
+            <div style="margin-top: 1px;">🔍 <strong>Range:</strong> {format_lap_time(p['best_case_time'])} - {format_lap_time(p['worst_case_time'])}</div>
         </div>
         <div style="margin-top: 4px; font-size: 9px; color: {d_color}; opacity: 0.9;">
             ✨ <strong>SHAP:</strong> FP3 ({shap_fp3:.2f}s) | Prior ({shap_elo:.2f}s)
