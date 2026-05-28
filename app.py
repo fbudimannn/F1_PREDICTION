@@ -228,7 +228,7 @@ st.markdown("""
 # 3. Sidebar Configuration
 if os.path.exists("logo f1.png"):
     st.sidebar.image("logo f1.png", use_container_width=True)
-st.sidebar.markdown(f"<h1 class='neon-text-red' style='font-size: 28px; margin-top: 10px; margin-bottom: 20px;'>F1 PREDICTOR Pro</h1>", unsafe_allow_html=True)
+st.sidebar.markdown(f"<h1 class='neon-text-red' style='font-size: 28px; margin-top: 10px; margin-bottom: 20px;'>F1 BAYESIAN PREDICTOR</h1>", unsafe_allow_html=True)
 
 # Circuit Selection
 active_circuit = st.sidebar.selectbox(
