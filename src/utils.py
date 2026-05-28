@@ -116,7 +116,7 @@ CIRCUITS = {
         "tyre_deg_coefficients": {"Soft": 0.08, "Medium": 0.04, "Hard": 0.018}
     },
     "monaco": {
-        "name": "Monte Carlo",
+        "name": "Monaco",
         "laps": 78,
         "length_km": 3.337,
         "type": "downforce-low",
