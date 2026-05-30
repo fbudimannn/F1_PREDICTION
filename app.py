@@ -550,7 +550,7 @@ with tab_qualy:
             render_html(f"""
 <div class="card" style="border-left: 5px solid {d_color}; position: relative; overflow: hidden; min-height: 180px;">
     <!-- Faded Driver Portrait Background -->
-    <div style="position: absolute; right: -12px; bottom: 0px; width: 130px; height: 160px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.12; mask-image: linear-gradient(to left, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 80%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 0;"></div>
+    <div style="position: absolute; right: -12px; bottom: 0px; width: 130px; height: 160px; background-image: url('{driver_img}'); background-size: cover; background-position: center top; opacity: 0.50; mask-image: linear-gradient(to left, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 80%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 0;"></div>
     <div style="position: relative; z-index: 1;">
         <div style="display: flex; justify-content: space-between;">
             <span style="font-size: 28px; font-weight: 800; color: {d_color};">P{p['predicted_position']}</span>
