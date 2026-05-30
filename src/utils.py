@@ -3,19 +3,19 @@ import numpy as np
 # 2026 Grid Database & Initial Bayesian Elo Calibration
 GRID_2026 = {
     "VER": {"name": "Max Verstappen", "team": "Red Bull", "is_rookie": False, "base_elo": 1900, "junior_bonus": 0},  # Still elite but car is weaker
-    "HAD": {"name": "Isack Hadjar", "team": "Red Bull", "is_rookie": True, "base_elo": 1420, "junior_bonus": 30},   # Red Bull 2026 rookie
+    "HAD": {"name": "Isack Hadjar", "team": "Red Bull", "is_rookie": True, "base_elo": 1680, "junior_bonus": 40},   # Red Bull 2026 rookie (mostly Q3, sometimes Q2)
     "HAM": {"name": "Lewis Hamilton", "team": "Ferrari", "is_rookie": False, "base_elo": 1850, "junior_bonus": 0},
     "LEC": {"name": "Charles Leclerc", "team": "Ferrari", "is_rookie": False, "base_elo": 1870, "junior_bonus": 0},
     "NOR": {"name": "Lando Norris", "team": "McLaren", "is_rookie": False, "base_elo": 1880, "junior_bonus": 0},
     "PIA": {"name": "Oscar Piastri", "team": "McLaren", "is_rookie": False, "base_elo": 1850, "junior_bonus": 0},  # Highly competitive McLaren
     "RUS": {"name": "George Russell", "team": "Mercedes", "is_rookie": False, "base_elo": 1840, "junior_bonus": 0}, # Mercedes pacesetter
     "ANT": {"name": "Kimi Antonelli", "team": "Mercedes", "is_rookie": False, "base_elo": 1860, "junior_bonus": 0},  # On fire! Star driver in a dominant Mercedes
-    "ALO": {"name": "Fernando Alonso", "team": "Aston Martin", "is_rookie": False, "base_elo": 1750, "junior_bonus": 0},
+    "ALO": {"name": "Fernando Alonso", "team": "Aston Martin", "is_rookie": False, "base_elo": 1580, "junior_bonus": 0}, # Underperforming in Aston Martin
     "STR": {"name": "Lance Stroll", "team": "Aston Martin", "is_rookie": False, "base_elo": 1480, "junior_bonus": 0},
     "GAS": {"name": "Pierre Gasly", "team": "Alpine", "is_rookie": False, "base_elo": 1550, "junior_bonus": 0},
     "COL": {"name": "Franco Colapinto", "team": "Alpine", "is_rookie": False, "base_elo": 1580, "junior_bonus": 0}, # Alpine 2026 signing
     "HUL": {"name": "Nico Hulkenberg", "team": "Audi", "is_rookie": False, "base_elo": 1580, "junior_bonus": 0},
-    "BOR": {"name": "Gabriel Bortoleto", "team": "Audi", "is_rookie": True, "base_elo": 1400, "junior_bonus": 50}, # Audi 2026 rookie
+    "BOR": {"name": "Gabriel Bortoleto", "team": "Audi", "is_rookie": True, "base_elo": 1520, "junior_bonus": 50}, # Audi rookie (Q2 contender)
     "LAW": {"name": "Liam Lawson", "team": "VCARB", "is_rookie": False, "base_elo": 1550, "junior_bonus": 0},      # VCARB 2026 driver
     "LIN": {"name": "Arvid Lindblad", "team": "VCARB", "is_rookie": True, "base_elo": 1380, "junior_bonus": 40},   # VCARB 2026 rookie
     "ALB": {"name": "Alex Albon", "team": "Williams", "is_rookie": False, "base_elo": 1620, "junior_bonus": 0},
@@ -304,11 +304,15 @@ def compute_expected_performance(elo_a, elo_b):
     """
     return 1 / (1 + 10 ** ((elo_b - elo_a) / 400))
 
-def update_elo_ratings(driver_priors, fp3_results, k_factor=32):
+def update_elo_ratings(driver_priors, fp3_results, k_factor=24, source_weight=1.0):
     """
-    Updates driver priors (Elo) using FP3 relative teammate comparisons (Bayesian Likelihood Equalizer).
+    Updates driver priors (Elo) using relative teammate comparisons (Bayesian Likelihood Equalizer).
     
-    fp3_results: dict mapping driver code to average lap time in seconds (e.g., {"HAM": 72.350, "LEC": 72.430})
+    fp3_results: dict mapping driver code to performance metric in seconds (lap time, etc.)
+                 Lower is better (faster).
+    k_factor: Sensitivity of each update. Default 24 for stable season-long accumulation.
+    source_weight: Multiplier for the update magnitude (e.g., 0.6 for qualifying, 0.4 for race).
+                   Allows weighting different data sources differently in cumulative ELO.
     """
     updated_priors = driver_priors.copy()
     
@@ -327,7 +331,7 @@ def update_elo_ratings(driver_priors, fp3_results, k_factor=32):
         
         driver_a, driver_b = drivers[0], drivers[1]
         
-        # Check if both set times in FP3
+        # Check if both set times
         if driver_a in fp3_results and driver_b in fp3_results:
             time_a = fp3_results[driver_a]
             time_b = fp3_results[driver_b]
@@ -342,9 +346,10 @@ def update_elo_ratings(driver_priors, fp3_results, k_factor=32):
             expected_a = compute_expected_performance(elo_a, elo_b)
             expected_b = 1.0 - expected_a
             
-            # Bayesian update formula: Posterior = Prior + K * (Actual - Expected)
-            updated_priors[driver_a] = int(elo_a + k_factor * (actual_a - expected_a))
-            updated_priors[driver_b] = int(elo_b + k_factor * (actual_b - expected_b))
+            # Bayesian update formula: Posterior = Prior + K * weight * (Actual - Expected)
+            effective_k = k_factor * source_weight
+            updated_priors[driver_a] = int(elo_a + effective_k * (actual_a - expected_a))
+            updated_priors[driver_b] = int(elo_b + effective_k * (actual_b - expected_b))
             
     return updated_priors
 
@@ -375,3 +380,145 @@ def get_driver_color(driver_code):
     if not team_info:
         return "#8f9cae"
     return team_info.get("color", "#8f9cae")
+
+
+# Module-level cache for pole times to avoid repeated FastF1 API calls
+_pole_time_cache = {}
+
+def get_historical_pole_time(active_circuit):
+    """
+    Gets the best available pole lap time reference for the active circuit.
+    Results are cached in-memory to avoid repeated FastF1 API calls.
+    
+    Priority order:
+    1. Actual 2026 Qualifying pole time from FastF1 (most accurate)
+    2. Actual 2026 Sprint Qualifying pole time from FastF1
+    3. Historical 2022-2025 average pole time with 2026 regulation speed correction (~3.5s faster)
+    4. Length-based calculation formula (last resort)
+    """
+    # Check in-memory cache first
+    if active_circuit in _pole_time_cache:
+        return _pole_time_cache[active_circuit]
+    
+    import os
+    
+    # Mapping from circuit_id to GP name for FastF1 lookups
+    circuit_to_gp = {
+        "australia": "Australian Grand Prix",
+        "china": "Chinese Grand Prix",
+        "japan": "Japanese Grand Prix",
+        "miami": "Miami Grand Prix",
+        "canada": "Canadian Grand Prix",
+        "monaco": "Monaco Grand Prix",
+        "barcelona": "Barcelona Grand Prix",
+        "austria": "Austrian Grand Prix",
+        "great_britain": "British Grand Prix",
+        "belgium": "Belgian Grand Prix",
+        "hungary": "Hungarian Grand Prix",
+        "netherlands": "Dutch Grand Prix",
+        "italy": "Italian Grand Prix",
+        "spain_madrid": "Spanish Grand Prix",
+        "azerbaijan": "Azerbaijan Grand Prix",
+        "singapore": "Singapore Grand Prix",
+        "united_states": "United States Grand Prix",
+        "mexico": "Mexico City Grand Prix",
+        "brazil": "São Paulo Grand Prix",
+        "las_vegas": "Las Vegas Grand Prix",
+        "qatar": "Qatar Grand Prix",
+        "abu_dhabi": "Abu Dhabi Grand Prix",
+        "bahrain": "Bahrain Grand Prix",
+        "saudi_arabia": "Saudi Arabian Grand Prix",
+    }
+    gp_name = circuit_to_gp.get(active_circuit)
+    
+    # Map to historical names in qualifying_2022_2025.csv if different from 2026 schedule names
+    circuit_to_historical_gp = {
+        "barcelona": "Spanish Grand Prix",
+        "spain_madrid": "Spanish Grand Prix",
+    }
+    hist_gp_name = circuit_to_historical_gp.get(active_circuit, gp_name)
+    
+    # ── Priority 1 & 2: Actual 2026 data from FastF1 ──
+    try:
+        import fastf1
+        fastf1.Cache.enable_cache('fastf1_cache')
+        
+        # Validate event exists in the 2026 schedule
+        schedule = fastf1.get_event_schedule(2026)
+        if gp_name:
+            event_row = schedule[schedule['EventName'].str.lower() == gp_name.lower()]
+            if len(event_row) == 0:
+                first_word = gp_name.split(' ')[0].lower()
+                event_row = schedule[schedule['EventName'].str.lower().str.contains(first_word, regex=False)]
+            
+            if len(event_row) > 0:
+                # Try Qualifying first (most representative), then Sprint Qualifying
+                for session_type in ['Q', 'Sprint Qualifying']:
+                    try:
+                        session = fastf1.get_session(2026, gp_name, session_type)
+                        session.load(telemetry=False, weather=False)
+                        if len(session.laps) > 0:
+                            quick_laps = session.laps.pick_quicklaps()
+                            if len(quick_laps) > 0:
+                                pole_time = quick_laps['LapTime'].min().total_seconds()
+                                if 40.0 < pole_time < 200.0:  # Sanity check
+                                    _pole_time_cache[active_circuit] = float(pole_time)
+                                    return _pole_time_cache[active_circuit]
+                    except Exception:
+                        continue
+    except Exception:
+        pass
+    
+    # ── Priority 3: Historical 2022-2025 Clean Dry Average ──
+    # We filter out wet qualifying sessions (defined as pole times > 3.0s slower than the circuit's minimum)
+    # to get a representative dry-weather baseline.
+    try:
+        import pandas as pd
+        
+        csv_path = "data/historical/qualifying_2022_2025.csv"
+        if not os.path.exists(csv_path):
+            csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "historical", "qualifying_2022_2025.csv")
+            
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            # Find the best qualifying time for each event and year
+            pole_times = df[df['quali_position'] == 1].groupby(['event', 'year'])['best_quali_time'].min().reset_index()
+            
+            # Find the minimum pole time across all years to establish the absolute dry pace limit
+            min_poles = pole_times.groupby('event')['best_quali_time'].min().to_dict()
+            
+            if hist_gp_name and hist_gp_name in min_poles:
+                event_poles = pole_times[pole_times['event'] == hist_gp_name]
+                min_val = min_poles[hist_gp_name]
+                
+                # Filter out years that are > 3.0 seconds slower than the minimum (wet sessions)
+                dry_poles = event_poles[event_poles['best_quali_time'] - min_val <= 3.0]['best_quali_time'].tolist()
+                
+                if dry_poles:
+                    historical_pole = sum(dry_poles) / len(dry_poles)
+                else:
+                    historical_pole = min_val
+                
+                _pole_time_cache[active_circuit] = float(historical_pole)
+                return _pole_time_cache[active_circuit]
+    except Exception as e:
+        print(f"[get_historical_pole_time] Warning: {e}")
+        
+    # ── Priority 4: Length-based formula (last resort, already calibrated for 2026) ──
+    meta = CIRCUITS.get(active_circuit, CIRCUITS["canada"])
+    length = meta["length_km"]
+    ctype = meta.get("type", "balanced-speed")
+    # These sec_per_km values are calibrated for 2026 car performance
+    if ctype == "speed-drag":
+        sec_per_km = 12.8
+    elif ctype == "traction-braking":
+        sec_per_km = 13.7
+    elif ctype == "downforce-high":
+        sec_per_km = 14.4
+    elif ctype == "downforce-low":
+        sec_per_km = 15.9
+    else:
+        sec_per_km = 13.4
+    _pole_time_cache[active_circuit] = float(length * sec_per_km)
+    return _pole_time_cache[active_circuit]
+

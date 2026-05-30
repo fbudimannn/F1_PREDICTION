@@ -7,21 +7,36 @@
 
 ## 🧭 System Overview
 
-The system applies a **three-layer probabilistic pipeline**:
+The system applies a **five-layer probabilistic pipeline**:
 
 ```
-FP3/SQ Telemetry
+Completed 2026 GPs (Qualifying + Race Results)
+    │
+    ▼
+┌──────────────────────────────────────┐
+│  LAYER 0: Season ELO Carryover       │  ← Cumulative Bayesian ELO (Quali 60% + Race 40%)
+│  Base ELO → Accumulated Season ELO  │
+└─────────────────┬────────────────────┘
+                  │ Season ELO (kumulatif)
+                  ▼
+FP3/SQ Telemetry (Current Weekend)
     │
     ▼
 ┌──────────────────────────────────────┐
 │  LAYER 1: Bayesian ELO Update        │  ← Bayes' Theorem (head-to-head)
-│  Prior × Likelihood → Posterior ELO  │
+│  Season ELO × Likelihood → Posterior │
 └─────────────────┬────────────────────┘
                   │ Updated ELO (Posterior)
                   ▼
 ┌──────────────────────────────────────┐
+│  LAYER 1.5: Dynamic Constructor Pace │  ← Rolling 3-GP gap-to-pole inference
+│  Replaces static pace_offset         │
+└─────────────────┬────────────────────┘
+                  │ Dynamic Pace Offsets
+                  ▼
+┌──────────────────────────────────────┐
 │  LAYER 2: LightGBM LTR + Quantile    │  ← LambdaMART + Quantile Regression
-│  Qualifying Grid Rank + Lap Time CI  │
+│  Qualifying Grid Rank + Lap Time CI  │  (trained on 2022-2025 structural patterns)
 └─────────────────┬────────────────────┘
                   │ Predicted Starting Grid
                   ▼
@@ -33,11 +48,49 @@ FP3/SQ Telemetry
 
 ---
 
-## 🔵 LAYER 1 — Bayesian ELO Update
+## 🟤 LAYER 0 — Season ELO Carryover
+
+### 0.1 Concept
+
+Instead of using static `base_elo` values that never change, the system **accumulates driver ELO ratings** across all completed 2026 GPs chronologically. Each GP updates the ELO using both qualifying results (60% weight) and race results (40% weight).
+
+### 0.2 Accumulation Formula
+
+For each completed GP $g$ in chronological order:
+
+$$\boxed{ELO^{(g)}_{\text{driver}} = ELO^{(g-1)}_{\text{driver}} + K \cdot w_{\text{quali}} \cdot (S_{Q} - E_{Q}) + K \cdot w_{\text{race}} \cdot (S_{R} - E_{R})}$$
+
+Where:
+- $K = 24$ (sensitivity factor, lower than standard 32 for season-long stability)
+- $w_{\text{quali}} = 0.6$ (qualifying weight)
+- $w_{\text{race}} = 0.4$ (race weight)
+- $S_Q, S_R$ = actual outcomes in qualifying and race (1.0 if beat teammate, 0.0 if lost)
+- $E_Q, E_R$ = expected outcomes from current ELO
+
+### 0.3 Example: Franco Colapinto Across 3 GPs
+
+| GP | Prior ELO | Quali Result | Race Result | Posterior ELO | Delta |
+|---|---|---|---|---|---|
+| Australia | 1580 (base) | Beat teammate | Beat teammate | **1597** | +17 |
+| China | 1597 | Lost to teammate | Beat teammate | **1594** | -3 |
+| Japan | 1594 | Beat teammate | Beat teammate | **1611** | +17 |
+
+> By the time we reach Miami, Colapinto's Prior ELO is **1611** (not the static 1580), reflecting his accumulated 2026 performance.
+
+### 0.4 Why Qualifying 60% + Race 40%?
+
+| Source | Weight | Rationale |
+|---|---|---|
+| Qualifying | 60% | Clean, low-fuel, maximum-attack laps. Purest head-to-head comparison. |
+| Race | 40% | Shows race craft and consistency, but noisier (DNFs, safety cars, strategy). |
+
+---
+
+## 🔵 LAYER 1 — Bayesian ELO Update (Weekend-Specific)
 
 ### 1.1 Concept
 
-Before each race weekend, every driver carries a **Prior ELO rating** representing their historical baseline performance. Once FP3 data arrives, the system runs a **Bayesian update** using head-to-head teammate lap time comparisons to produce a **Posterior ELO** reflecting their current weekend form.
+Before each race weekend, every driver carries a **Season ELO** (from Layer 0) representing their cumulative 2026 performance. Once FP3 data arrives, the system runs a **Bayesian update** using head-to-head teammate lap time comparisons to produce a **Posterior ELO** reflecting their current weekend form.
 
 > **Why teammate-only comparison?** Because both drivers share the same car specification, circuit allocation, and weather. A teammate head-to-head isolates *driver skill* from *car advantage*, which is the purest signal of current form.
 
@@ -84,22 +137,48 @@ This is the continuous ELO expected performance formula. It returns the probabil
 
 ### 1.5 Posterior Update — $P(A|B)$
 
-Using the **Bayesian Elo Update Formula** with K-factor = 32:
+Using the **Bayesian Elo Update Formula** with K-factor = 24:
 
 $$\boxed{R'_A = R_A + K \cdot (S_A - E_A)}$$
 
 **ANT (Won):**
-$$R'_{ANT} = 1860 + 32 \times (1.0 - 0.529) = 1860 + 15 = \mathbf{1875}$$
+$$R'_{ANT} = 1860 + 24 \times (1.0 - 0.529) = 1860 + 11 = \mathbf{1871}$$
 
 **RUS (Lost):**
-$$R'_{RUS} = 1840 + 32 \times (0.0 - 0.471) = 1840 - 15 = \mathbf{1825}$$
+$$R'_{RUS} = 1840 + 24 \times (0.0 - 0.471) = 1840 - 11 = \mathbf{1829}$$
 
-| Driver | Prior ELO | FP3 Result | Posterior ELO | Delta |
+| Driver | Season ELO | FP3 Result | Posterior ELO | Delta |
 |---|---|---|---|---|
-| ANT | 1860 | Won (faster) | **1875** | +15 |
-| RUS | 1840 | Lost (slower) | **1825** | -15 |
+| ANT | 1860 | Won (faster) | **1871** | +11 |
+| RUS | 1840 | Lost (slower) | **1829** | -11 |
 
 > The 20-point raw gap between ANT and RUS widens to **50 points** after this Bayesian update, signaling ANT's dominance in current form at Monaco.
+
+---
+
+## 🟠 LAYER 1.5 — Dynamic Constructor Pace Inference
+
+### 1.5.1 Concept
+
+Instead of using hardcoded `pace_offset` values per constructor (e.g., McLaren = -0.65s, Haas = +0.50s), the system **dynamically infers** constructor pace offsets from real qualifying data of completed 2026 GPs.
+
+### 1.5.2 Rolling Window Calculation
+
+For each constructor $c$, compute the average best-driver gap-to-pole over the last 3 completed GPs:
+
+$$\boxed{\text{gap}_{c} = \frac{1}{\min(3, N)} \sum_{i=\max(1, N-2)}^{N} \text{best\_quali\_gap\_to\_pole}_{c,i}}$$
+
+Then normalize to the pace_offset range:
+
+$$\boxed{\text{pace\_offset}_{c} = \text{clip}\left(\frac{\text{gap}_{c}}{1.5} \times 1.15 - 0.65,\; -0.65,\; +0.50\right)}$$
+
+### 1.5.3 Trend Detection
+
+| Trend | Condition |
+|---|---|
+| **Improving** ↑ | Latest GP gap < rolling average - 0.05s (upgrade detected) |
+| **Stable** → | Within ±0.05s of rolling average |
+| **Declining** ↓ | Latest GP gap > rolling average + 0.05s (regression detected) |
 
 ---
 
@@ -116,36 +195,23 @@ The model combines two algorithms:
 
 ### 2.2 Hybrid Pacing Score
 
-Before feeding data to LightGBM, each driver receives a **Hybrid Qualifying Score** that combines three signals:
+The system combines the LightGBM Ranker structural model (85% weight) with the current weekend's FP3/Sprint Qualifying form (15% weight):
 
-$$\boxed{S_{total} = 0.50 \cdot S_{ELO} + 0.35 \cdot S_{car} + 0.15 \cdot S_{FP3} + \varepsilon}$$
+$$\boxed{S_{total} = 0.85 \cdot S_{LTR} + 0.15 \cdot S_{FP3} + \varepsilon}$$
 
 Where:
 
-#### A. ELO Score $S_{ELO}$
+#### A. LightGBM Ranker Score $S_{LTR}$
 
-Linear normalization of Updated Posterior ELO (range 1300–2000):
+The LightGBM Ranker model determines baseline structural scores using the following leak-free feature vector:
 
-$$S_{ELO} = \text{clip}\left(\frac{ELO_{posterior} - 1300}{700}, 0, 1\right)$$
+$$\mathbf{x} = [\text{driver-elo-prior}, \text{constructor-pace-prior}, \text{prev-quali-position}, \text{avg-quali-position-last3}]$$
 
-**ANT example:**
-$$S_{ELO}^{ANT} = \frac{1875 - 1300}{700} = \frac{575}{700} = \mathbf{0.821}$$
+The raw output score from `self.ranker.predict()` is normalized to a $[0, 1]$ range across all drivers (higher is better):
 
-#### B. Constructor Car Score $S_{car}$
+$$S_{LTR} = \frac{S_{\text{raw}} - S_{\text{min}}}{S_{\text{max}} - S_{\text{min}}}$$
 
-Normalized from constructor pace offsets (range −0.65 → +0.50, lower is faster):
-
-$$S_{car} = \text{clip}\left(\frac{-\text{pace-offset} + 0.50}{1.15}, 0, 1\right)$$
-
-| Team | Pace Offset | $S_{car}$ |
-|---|---|---|
-| Mercedes | −0.65 | $\frac{0.65 + 0.50}{1.15} = \mathbf{1.00}$ |
-| McLaren | −0.55 | $\mathbf{0.913}$ |
-| Ferrari | −0.50 | $\mathbf{0.870}$ |
-| Red Bull | −0.15 | $\mathbf{0.565}$ |
-| Aston Martin | +0.35 | $\mathbf{0.130}$ |
-
-#### C. Practice Pace Score $S_{FP3}$
+#### B. Practice Pace Score $S_{FP3}$
 
 FP3 times are first **tyre-normalized** (removing compound advantage):
 
@@ -157,37 +223,21 @@ Then the score is calculated relative to the best normalized time in the session
 
 $$S_{FP3} = \text{clip}\left(1 - \frac{t_{norm,driver} - t_{norm,best}}{3.0}, 0, 1\right)$$
 
-**ANT example** (Monaco FP3, Soft tyres, 1:12.430 = 72.43s):
-- Best normalized FP3 = ANT himself at 72.43s
-- $S_{FP3}^{ANT} = 1 - \frac{72.43 - 72.43}{3.0} = \mathbf{1.000}$
-
-#### D. Stochastic Session Variance $\varepsilon$
+#### C. Stochastic Session Variance $\varepsilon$
 
 To simulate organic qualifying unpredictability (track evolution, lock-ups, yellow flags):
 
 $$\varepsilon \sim \mathcal{N}(0, \sigma^2), \quad \sigma = 0.025$$
 
-#### E. Combined Score — Monaco Example
+### 2.3 LambdaMART Ranker (LTR) Objective
 
-| Driver | $S_{ELO}$ | $S_{car}$ | $S_{FP3}$ | $\varepsilon$ | **$S_{total}$** | Grid |
-|---|---|---|---|---|---|---|
-| ANT | 0.821 | 1.000 | 1.000 | +0.008 | **0.868** | **P1** |
-| RUS | 0.750 | 1.000 | 0.956 | −0.003 | **0.840** | **P2** |
-| NOR | 0.814 | 0.913 | 0.920 | +0.012 | **0.840** | **P3** |
-
-### 2.3 LambdaMART Ranker (LTR)
-
-After scoring, the LightGBM Ranker fine-tunes the relative ordering using the following feature vector:
-
-$$\mathbf{x} = [\text{fp3-avg}, \text{speed-trap}, \text{track-temp}, \text{driver-elo}, \text{tyre-code}, \text{rain-intensity}]$$
-
-**Objective:** Maximize NDCG (Normalized Discounted Cumulative Gain):
+The LightGBM Ranker is optimized to maximize NDCG (Normalized Discounted Cumulative Gain):
 
 $$NDCG@k = \frac{DCG@k}{IDCG@k}$$
 
 $$DCG@k = \sum_{i=1}^{k} \frac{2^{rel_i} - 1}{\log_2(i+1)}$$
 
-Where $rel_i$ is the relevance score (rank in session) — fastest driver gets relevance = 22, slowest gets 1.
+Where $rel_i$ is the relevance score (rank in session) — fastest driver gets relevance = 20, slowest gets 1.
 
 ### 2.4 Quantile Regression — Credible Intervals
 
@@ -203,18 +253,17 @@ Three separate LightGBM Regressors with `objective="quantile"` estimate the **90
 
 $$\mathcal{L}(y, \hat{y}; \alpha) = \begin{cases} \alpha \cdot (y - \hat{y}) & \text{if } y \geq \hat{y} \\ (1-\alpha) \cdot (\hat{y} - y) & \text{if } y < \hat{y} \end{cases}$$
 
-**Base lap time anchor** for Monaco (circuit-specific):
+**Base lap time anchor** ($t_{pole}$) for the active circuit is determined by a priority-based reference engine:
 
-$$t_{pole} = L_{km} \times s_{type}$$
+1. **Priority 1**: Actual 2026 Qualifying pole time from the FastF1 API (for completed races).
+2. **Priority 2**: Actual 2026 Sprint Qualifying pole time from the FastF1 API.
+3. **Priority 3**: Historical 2022–2025 Clean Dry Average (for upcoming races). Wet qualifying sessions are automatically filtered out by excluding years where the pole time is $> 3.0\text{s}$ slower than the absolute fastest pole time for that circuit in that era.
+4. **Priority 4 (Fallback)**: Length-based physical formula:
+   $$t_{pole} = L_{km} \times s_{type}$$
+   Where $s_{type}$ ranges from $12.8\text{s/km}$ (speed-drag) to $14.5\text{s/km}$ (downforce-high).
 
-| Circuit Type | $s_{type}$ (sec/km) |
-|---|---|
-| Speed-Drag | 13.5 |
-| Balanced | 14.2 |
-| Traction-Braking | 14.5 |
-| Downforce-High | 15.2 |
-
-**Monaco** = 3.337 km × 15.2 (downforce-high) = **50.72s** base pole time
+**Monaco** (Upcoming GP) = Resolves to **Priority 3 (Clean Dry Average)** = **70.741s** (1:10.741) base pole time.
+**Canada** (Completed GP) = Resolves to **Priority 1 (Actual 2026 Qualy)** = **72.578s** (1:12.578) base pole time.
 
 **Gap model between positions:**
 
@@ -647,6 +696,59 @@ MONACO GP 2026 — Status: ✅ RACE COMPLETED
 | `fastf1` | Real FP3/SQ/Race data ingestion from official F1 API |
 | `streamlit` | Real-time interactive web dashboard |
 | `plotly` | Interactive telemetry, qualifying, and probability charts |
+| `optuna` | Hyperparameter optimization for LightGBM models |
+| `joblib` | Model serialization and persistence |
+
+---
+
+## 🧪 Model Training & Validation
+
+### Training Data
+
+| Aspect | Detail |
+|---|---|
+| **Data Source** | FastF1 API — 2022-2025 seasons |
+| **Data Points** | ~1,800 qualifying + race entries |
+| **Features** | `driver_elo`, `teammate_quali_gap`, `gap_to_pole`, `constructor_pace_rolling` |
+| **Target** | `target_quali_rank` (qualifying position) |
+
+### Time-Series Cross-Validation
+
+```
+Fold 1:  Train [2022]          → Validate [2023]
+Fold 2:  Train [2022, 2023]    → Validate [2024]
+Fold 3:  Train [2022, 2023, 2024] → Test [2025]  ← Final evaluation
+```
+
+### Anti-Overfitting Guards
+
+| Guard | Mechanism |
+|---|---|
+| L1/L2 Regularization | `reg_alpha` and `reg_lambda` via Optuna |
+| Tree Depth Limit | `max_depth` ∈ [3, 8] |
+| Minimum Samples | `min_child_samples` ∈ [3, 20] |
+| Overfit Gap Check | |train_NDCG - test_NDCG| < 15% |
+| Time-Series CV | Prevents data leakage from future seasons |
+
+### Evaluation Metrics
+
+| Metric | Description |
+|---|---|
+| NDCG@3 | Top-3 ranking accuracy |
+| NDCG@5 | Top-5 ranking accuracy |
+| NDCG@10 | Top-10 ranking accuracy |
+| MAE | Mean Absolute Error for lap time gap (seconds) |
+| Overfit Gap | |train_NDCG@5 - test_NDCG@5| |
+
+### Hybrid Architecture (2026 Regulation Compatibility)
+
+| Component | Data Source | Purpose |
+|---|---|---|
+| Season ELO (Layer 0) | 2026 only | Driver strength (current season) |
+| Constructor Pace (Layer 1.5) | 2026 only | Car performance (current season) |
+| LightGBM Patterns (Layer 2) | 2022-2025 | Structural patterns (transferable) |
+
+> **Key Insight**: Since 2026 has completely new car regulations, the model separates *what changes* (car/driver performance → from 2026 data only) from *what stays the same* (structural relationships between variables → from historical data).
 
 ---
 

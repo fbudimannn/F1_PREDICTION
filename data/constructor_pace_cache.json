@@ -1,0 +1,1370 @@
+{
+  "china": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": 0.011,
+      "color": "#FF8700",
+      "trend": "stable"
+    },
+    "Ferrari": {
+      "pace_offset": -0.03,
+      "color": "#C40000",
+      "trend": "stable"
+    },
+    "Red Bull": {
+      "pace_offset": -0.048,
+      "color": "#3671C6",
+      "trend": "stable"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "stable"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "stable"
+    },
+    "Audi": {
+      "pace_offset": 0.5,
+      "color": "#FF4D00",
+      "trend": "stable"
+    },
+    "VCARB": {
+      "pace_offset": 0.464,
+      "color": "#1045E2",
+      "trend": "stable"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "stable"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "stable"
+    },
+    "Alpine": {
+      "pace_offset": 0.5,
+      "color": "#0090FF",
+      "trend": "stable"
+    }
+  },
+  "japan": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.133,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.205,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": 0.01,
+      "color": "#3671C6",
+      "trend": "declining"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.472,
+      "color": "#D9D9D9",
+      "trend": "improving"
+    },
+    "Audi": {
+      "pace_offset": 0.497,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.5,
+      "color": "#1045E2",
+      "trend": "declining"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.42,
+      "color": "#0090FF",
+      "trend": "improving"
+    }
+  },
+  "bahrain": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.215,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.219,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": 0.097,
+      "color": "#3671C6",
+      "trend": "declining"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.489,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.425,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.496,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "declining"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.297,
+      "color": "#0090FF",
+      "trend": "improving"
+    }
+  },
+  "saudi_arabia": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.215,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.219,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": 0.097,
+      "color": "#3671C6",
+      "trend": "declining"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.489,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.425,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.496,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "declining"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.297,
+      "color": "#0090FF",
+      "trend": "improving"
+    }
+  },
+  "miami": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.215,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.219,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": 0.097,
+      "color": "#3671C6",
+      "trend": "declining"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.489,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.425,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.496,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "declining"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.297,
+      "color": "#0090FF",
+      "trend": "improving"
+    }
+  },
+  "canada": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.337,
+      "color": "#FF8700",
+      "trend": "stable"
+    },
+    "Ferrari": {
+      "pace_offset": -0.338,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.061,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.425,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.409,
+      "color": "#FF4D00",
+      "trend": "declining"
+    },
+    "VCARB": {
+      "pace_offset": 0.5,
+      "color": "#1045E2",
+      "trend": "declining"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "declining"
+    },
+    "Alpine": {
+      "pace_offset": 0.036,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "monaco": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "barcelona": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "austria": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "great_britain": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "belgium": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "hungary": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "netherlands": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "italy": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "spain_madrid": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "azerbaijan": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "singapore": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "united_states": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "mexico": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "brazil": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "las_vegas": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "qatar": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "abu_dhabi": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  },
+  "__all__": {
+    "Mercedes": {
+      "pace_offset": -0.65,
+      "color": "#00D2BE",
+      "trend": "stable"
+    },
+    "McLaren": {
+      "pace_offset": -0.423,
+      "color": "#FF8700",
+      "trend": "improving"
+    },
+    "Ferrari": {
+      "pace_offset": -0.354,
+      "color": "#C40000",
+      "trend": "improving"
+    },
+    "Red Bull": {
+      "pace_offset": -0.217,
+      "color": "#3671C6",
+      "trend": "improving"
+    },
+    "Williams": {
+      "pace_offset": 0.5,
+      "color": "#005AFF",
+      "trend": "improving"
+    },
+    "Haas": {
+      "pace_offset": 0.5,
+      "color": "#D9D9D9",
+      "trend": "declining"
+    },
+    "Audi": {
+      "pace_offset": 0.413,
+      "color": "#FF4D00",
+      "trend": "improving"
+    },
+    "VCARB": {
+      "pace_offset": 0.304,
+      "color": "#1045E2",
+      "trend": "improving"
+    },
+    "Aston Martin": {
+      "pace_offset": 0.5,
+      "color": "#00594F",
+      "trend": "improving"
+    },
+    "Cadillac": {
+      "pace_offset": 0.5,
+      "color": "#999999",
+      "trend": "improving"
+    },
+    "Alpine": {
+      "pace_offset": 0.116,
+      "color": "#0090FF",
+      "trend": "declining"
+    }
+  }
+}

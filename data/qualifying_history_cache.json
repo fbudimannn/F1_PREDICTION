@@ -1,0 +1,2252 @@
+{
+  "australia": {
+    "VER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "HAD": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "HAM": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "LEC": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "NOR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "PIA": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "RUS": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "ANT": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "ALO": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "STR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "GAS": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "COL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "BOR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "LAW": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "LIN": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "ALB": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "SAI": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "OCO": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "BEA": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "PER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "BOT": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    }
+  },
+  "china": {
+    "VER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "HAD": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 3.0
+    },
+    "HAM": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 7.0
+    },
+    "LEC": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 4.0
+    },
+    "NOR": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 5.0
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 1.0
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 2.0
+    },
+    "ALO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "STR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "COL": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 16.0
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "BOR": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 10.0
+    },
+    "LAW": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 8.0
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 9.0
+    },
+    "ALB": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "SAI": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "OCO": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "BEA": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "PER": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 18.0
+    },
+    "BOT": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 19.0
+    }
+  },
+  "japan": {
+    "VER": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 9.5
+    },
+    "HAD": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "HAM": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 5.0
+    },
+    "LEC": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 4.0
+    },
+    "NOR": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 5.0
+    },
+    "RUS": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 1.5
+    },
+    "ANT": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 1.5
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 18.0
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.0
+    },
+    "GAS": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 10.5
+    },
+    "COL": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "BOR": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "LAW": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "LIN": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 16.5
+    },
+    "SAI": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "OCO": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "BEA": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "PER": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 20.0
+    },
+    "BOT": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 19.5
+    }
+  },
+  "bahrain": {
+    "VER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.0
+    },
+    "HAD": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 6.67
+    },
+    "HAM": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 5.33
+    },
+    "LEC": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 4.0
+    },
+    "NOR": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "PIA": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 4.33
+    },
+    "RUS": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 1.67
+    },
+    "ANT": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 1.33
+    },
+    "ALO": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 19.0
+    },
+    "STR": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 18.0
+    },
+    "GAS": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 9.33
+    },
+    "COL": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 14.33
+    },
+    "HUL": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 11.67
+    },
+    "BOR": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 11.67
+    },
+    "LAW": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "LIN": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "ALB": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "SAI": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "OCO": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 12.67
+    },
+    "BEA": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "PER": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 19.67
+    },
+    "BOT": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 19.67
+    }
+  },
+  "saudi_arabia": {
+    "VER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.0
+    },
+    "HAD": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 9.33
+    },
+    "HAM": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 6.67
+    },
+    "LEC": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "NOR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "PIA": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "RUS": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 5.0
+    },
+    "ANT": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 4.33
+    },
+    "ALO": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "STR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 18.0
+    },
+    "GAS": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 8.33
+    },
+    "COL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 12.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.67
+    },
+    "BOR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "LAW": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "LIN": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 15.33
+    },
+    "SAI": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "OCO": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "BEA": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 17.33
+    },
+    "BOT": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 17.0
+    }
+  },
+  "miami": {
+    "VER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "HAD": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.0
+    },
+    "HAM": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 9.33
+    },
+    "LEC": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 8.67
+    },
+    "NOR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 9.0
+    },
+    "PIA": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 8.33
+    },
+    "RUS": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 8.0
+    },
+    "ANT": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 7.67
+    },
+    "ALO": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 14.33
+    },
+    "STR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "GAS": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "COL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 12.33
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.67
+    },
+    "BOR": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.33
+    },
+    "LAW": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "LIN": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "ALB": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "SAI": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 12.67
+    },
+    "OCO": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "BEA": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "PER": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 13.67
+    },
+    "BOT": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 14.0
+    }
+  },
+  "canada": {
+    "VER": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 8.0
+    },
+    "HAD": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "HAM": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 9.33
+    },
+    "LEC": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 8.33
+    },
+    "NOR": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 8.67
+    },
+    "PIA": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "RUS": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 9.0
+    },
+    "ANT": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 7.67
+    },
+    "ALO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "STR": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "GAS": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 10.33
+    },
+    "COL": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 10.0
+    },
+    "HUL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 14.33
+    },
+    "LAW": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 11.0
+    },
+    "LIN": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 12.67
+    },
+    "ALB": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 12.33
+    },
+    "SAI": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 11.67
+    },
+    "OCO": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "BEA": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BOT": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 13.67
+    }
+  },
+  "monaco": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "barcelona": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "austria": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "great_britain": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "belgium": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "hungary": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "netherlands": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "italy": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "spain_madrid": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "azerbaijan": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "singapore": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "united_states": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "mexico": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "brazil": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "las_vegas": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "qatar": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "abu_dhabi": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  },
+  "__all__": {
+    "VER": {
+      "prev_quali_position": 6.0,
+      "avg_quali_position_last3": 6.33
+    },
+    "HAD": {
+      "prev_quali_position": 7.0,
+      "avg_quali_position_last3": 13.33
+    },
+    "HAM": {
+      "prev_quali_position": 5.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "LEC": {
+      "prev_quali_position": 8.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "NOR": {
+      "prev_quali_position": 3.0,
+      "avg_quali_position_last3": 6.0
+    },
+    "PIA": {
+      "prev_quali_position": 4.0,
+      "avg_quali_position_last3": 7.33
+    },
+    "RUS": {
+      "prev_quali_position": 1.0,
+      "avg_quali_position_last3": 5.67
+    },
+    "ANT": {
+      "prev_quali_position": 2.0,
+      "avg_quali_position_last3": 4.67
+    },
+    "ALO": {
+      "prev_quali_position": 19.0,
+      "avg_quali_position_last3": 15.67
+    },
+    "STR": {
+      "prev_quali_position": 21.0,
+      "avg_quali_position_last3": 16.67
+    },
+    "GAS": {
+      "prev_quali_position": 14.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "COL": {
+      "prev_quali_position": 10.0,
+      "avg_quali_position_last3": 9.67
+    },
+    "HUL": {
+      "prev_quali_position": 11.0,
+      "avg_quali_position_last3": 10.67
+    },
+    "BOR": {
+      "prev_quali_position": 13.0,
+      "avg_quali_position_last3": 15.0
+    },
+    "LAW": {
+      "prev_quali_position": 12.0,
+      "avg_quali_position_last3": 11.33
+    },
+    "LIN": {
+      "prev_quali_position": 9.0,
+      "avg_quali_position_last3": 12.0
+    },
+    "ALB": {
+      "prev_quali_position": 18.0,
+      "avg_quali_position_last3": 14.67
+    },
+    "SAI": {
+      "prev_quali_position": 15.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "OCO": {
+      "prev_quali_position": 17.0,
+      "avg_quali_position_last3": 14.0
+    },
+    "BEA": {
+      "prev_quali_position": 16.0,
+      "avg_quali_position_last3": 13.0
+    },
+    "PER": {
+      "prev_quali_position": 20.0,
+      "avg_quali_position_last3": 17.0
+    },
+    "BOT": {
+      "prev_quali_position": 22.0,
+      "avg_quali_position_last3": 17.33
+    }
+  }
+}

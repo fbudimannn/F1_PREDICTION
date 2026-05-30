@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
+import os
 import lightgbm as lgb
-from .utils import CIRCUITS, GRID_2026, CONSTRUCTORS_2026
+import joblib
+from .utils import CIRCUITS, GRID_2026, CONSTRUCTORS_2026, get_historical_pole_time
 
 class QualifyingModel:
     """
@@ -10,70 +12,72 @@ class QualifyingModel:
     1. LightGBM Ranker (Lambdarank) for final relative grid order (P1-P20).
     2. Quantile Regression for lap time credible intervals.
     """
+    MODELS_DIR = "models"
+    
     def __init__(self):
         self.ranker = None
         self.quantile_models = {}
+        self._using_trained_models = False
+    
+    def load_trained_models(self):
+        """
+        Loads pre-trained LightGBM models from disk (joblib format).
+        Falls back to train_mock_models() if model files are not found.
+        """
+        ranker_path = os.path.join(self.MODELS_DIR, "qualifying_ranker.joblib")
+        if not os.path.exists(ranker_path):
+            print("[QualifyingModel] Trained models not found, falling back to mock models.")
+            self.train_mock_models()
+            return
+        
+        try:
+            self.ranker = joblib.load(ranker_path)
+            
+            for q in [0.10, 0.50, 0.90]:
+                q_path = os.path.join(self.MODELS_DIR, f"lap_time_q{int(q*100):02d}.joblib")
+                if os.path.exists(q_path):
+                    self.quantile_models[q] = joblib.load(q_path)
+            
+            self._using_trained_models = True
+            print("[QualifyingModel] Successfully loaded pre-trained models.")
+        except Exception as e:
+            print(f"[QualifyingModel] Error loading models: {e}. Falling back to mock.")
+            self.train_mock_models()
         
     def train_mock_models(self, track_type="balanced-speed"):
         """
-        Calibrates model anchors using actual full lap time ranges.
+        Calibrates model anchors using the updated leak-free feature matrix.
         """
         np.random.seed(42)
         n_samples = 220
         
-        # Engineering features using actual F1 full lap time spans
-        # Generate varied lap times across simulated circuits (e.g. 60s to 105s)
-        # to ensure the trees split correctly on fp3_avg over a wide range of tracks.
-        fp3_avg = np.zeros(n_samples)
-        for i in range(0, n_samples, 22):
-            base_circuit_time = np.random.uniform(60.0, 105.0)
-            fp3_avg[i:i+22] = np.random.normal(base_circuit_time, 1.5, 22)
-        speed_trap = np.random.normal(330, 8, n_samples)
-        track_temp = np.random.normal(32, 5, n_samples)
-        driver_elo = np.random.normal(1600, 150, n_samples)
+        # Generate new features
+        driver_elo_prior = np.random.normal(1600, 150, n_samples)
+        constructor_pace_prior = np.random.uniform(-0.6, 0.5, n_samples)
+        prev_quali_position = np.random.uniform(1.0, 20.0, n_samples)
+        avg_quali_position_last3 = np.random.uniform(1.0, 20.0, n_samples)
         
-        # rain_intensity: 0.0 (Dry), 0.5 (Damp), 1.0 (Wet)
-        rain_intensity = np.random.choice([0.0, 0.5, 1.0], n_samples, p=[0.6, 0.25, 0.15])
+        # Target gap to pole
+        y_time = (0.5 * constructor_pace_prior - (driver_elo_prior - 1500) * 0.001 
+                  + prev_quali_position * 0.05 + avg_quali_position_last3 * 0.05
+                  + np.random.normal(0, 0.1, n_samples))
+        y_time = np.clip(y_time, 0.0, 5.0)
         
-        # Tyre selection corresponding to wetness
-        # 0: Soft, 1: Medium, 2: Hard, 3: Intermediate, 4: Wet
-        tyre_compound_code = np.zeros(n_samples, dtype=int)
-        for i in range(n_samples):
-            if rain_intensity[i] == 0.0:
-                tyre_compound_code[i] = np.random.choice([0, 1, 2])
-            elif rain_intensity[i] == 0.5:
-                tyre_compound_code[i] = 3 # Intermediate
-            else:
-                tyre_compound_code[i] = 4 # Wet
-        
-        # tyre deltas: Soft=0.0s, Medium=0.4s, Hard=0.8s, Intermediate=1.5s, Wet=2.5s
-        tyre_deltas = np.array([0.0, 0.4, 0.8, 1.5, 2.5])
-        tyre_delta = tyre_deltas[tyre_compound_code]
-        
-        # Target qualifying times (seconds)
-        # Rain intensity of 0.5 adds ~7.5s, 1.0 adds ~15s. Lap time noise is also scaled by rain.
-        y_time = (fp3_avg - 0.5 - (driver_elo - 1500) * 0.001 
-                  - speed_trap * 0.01 + (35 - track_temp) * 0.02 
-                  + tyre_delta + rain_intensity * 15.0 
-                  + np.random.normal(0, 0.1 * (1.0 + rain_intensity * 3.0), n_samples))
-        
-        # Target relative ranks/relevance (22 for fastest, 1 for slowest)
+        # Target relative ranks/relevance (20 for fastest, 1 for slowest per group of 20)
         y_rank = np.zeros(n_samples)
-        for i in range(0, n_samples, 22):
-            times_group = y_time[i:i+22]
-            y_rank[i:i+22] = 22 - np.argsort(np.argsort(times_group))
+        for i in range(0, n_samples, 20):
+            times_group = y_time[i:i+20]
+            y_rank[i:i+20] = 20 - np.argsort(np.argsort(times_group))
             
         X = pd.DataFrame({
-            "fp3_avg": fp3_avg,
-            "speed_trap": speed_trap,
-            "track_temp": track_temp,
-            "driver_elo": driver_elo,
-            "tyre_code": tyre_compound_code,
-            "rain_intensity": rain_intensity
+            "driver_elo_prior": driver_elo_prior,
+            "constructor_pace_prior": constructor_pace_prior,
+            "prev_quali_position": prev_quali_position,
+            "avg_quali_position_last3": avg_quali_position_last3
         })
         
         # 1. Fit Lambdarank Model for relative ranking
-        group = [22] * (n_samples // 22)
+        group = [20] * (n_samples // 20)
         self.ranker = lgb.LGBMRanker(
             objective="lambdarank",
             metric="ndcg",
@@ -99,7 +103,7 @@ class QualifyingModel:
             q_model.fit(X, y_time)
             self.quantile_models[q] = q_model
 
-    def predict_qualifying(self, driver_priors, fp3_results, track_temp, speed_traps, tyre_codes, rain_intensity=0.0):
+    def predict_qualifying(self, driver_priors, fp3_results, track_temp, speed_traps, tyre_codes, rain_intensity=0.0, constructor_pace_dynamic=None, active_circuit="canada"):
         """
         Predicts final qualifying grid ranking and time intervals with strictly
         rank-consistent and highly realistic 2026 paddock distributions.
@@ -110,34 +114,70 @@ class QualifyingModel:
         speed_traps: dict of maximum speeds in FP3
         tyre_codes: dict of active tyre compounds (0: Soft, 1: Medium, 2: Hard, 3: Intermediate, 4: Wet)
         rain_intensity: float (0.0: Dry, 0.5: Damp, 1.0: Wet)
+        constructor_pace_dynamic: optional dict of dynamic constructor pace data.
+                                  If provided, overrides static CONSTRUCTORS_2026 pace offsets.
+                                  Format: {team_name: {"pace_offset": float, "color": str}}
+        active_circuit: str - circuit ID (e.g. "canada", "monaco"). Passed explicitly by the caller.
         """
         drivers = list(GRID_2026.keys())
-        
-        # 1. Detect active circuit based on average FP3 times
-        active_circuit = "canada"
-        if len(fp3_results) > 0:
-            avg_fp3_time = np.mean(list(fp3_results.values()))
-            best_match = None
-            min_diff = 999999.0
-            for cid, cdata in CIRCUITS.items():
-                expected_base = cdata["length_km"] * 14.5
-                diff = abs(avg_fp3_time - expected_base)
-                if diff < min_diff:
-                    min_diff = diff
-                    best_match = cid
-            if best_match:
-                active_circuit = best_match
 
-        # 2. Mathematically rigorous Qualifying Pacing Score
-        # Combines Bayesian ELO (50%), Constructor car pace (35%), and normalized FP3 pace (15%)
-        # with qualifying-specific driver variance.
-        scores = []
-        
-        # Normalize FP3 times to remove tyre compound offsets so we compare on equal terms
-        # tyre_deltas relative to Soft: Soft=0.0s, Medium=+0.6s, Hard=+1.2s
+        # Load qualifying history for prior position features
+        from .season_elo import compute_qualifying_history
+        quali_history = compute_qualifying_history(active_circuit)
+
+        # Build feature DataFrame for all drivers
+        features_list = []
+        for d in drivers:
+            elo = driver_priors.get(d, 1500.0)
+            team_name = GRID_2026[d]["team"]
+            
+            if constructor_pace_dynamic and team_name in constructor_pace_dynamic:
+                pace_offset = constructor_pace_dynamic[team_name].get("pace_offset", 0.0)
+            else:
+                pace_offset = CONSTRUCTORS_2026.get(team_name, {}).get("pace_offset", 0.0)
+                
+            history = quali_history.get(d, {})
+            prev_pos = history.get("prev_quali_position", 11.0)
+            avg_pos_3 = history.get("avg_quali_position_last3", 11.0)
+            
+            features_list.append({
+                "driver_elo_prior": elo,
+                "constructor_pace_prior": pace_offset,
+                "prev_quali_position": prev_pos,
+                "avg_quali_position_last3": avg_pos_3
+            })
+            
+        features_df = pd.DataFrame(features_list)
+
+        # 2. Get LightGBM Ranker Score (or fallback if models not loaded)
+        if self._using_trained_models and self.ranker is not None:
+            # Predict using LightGBM ranker
+            lgbm_scores = self.ranker.predict(features_df)
+            
+            # Normalize lgbm scores to 0-1 range (higher = better)
+            min_lgbm = min(lgbm_scores)
+            max_lgbm = max(lgbm_scores)
+            lgbm_range = (max_lgbm - min_lgbm) if max_lgbm > min_lgbm else 1.0
+            lgbm_norm = (lgbm_scores - min_lgbm) / lgbm_range
+        else:
+            # Fallback to manual scoring (elo + car pace normalized)
+            lgbm_norm = []
+            for d in drivers:
+                elo = driver_priors.get(d, 1500.0)
+                team_name = GRID_2026[d]["team"]
+                if constructor_pace_dynamic and team_name in constructor_pace_dynamic:
+                    pace_offset = constructor_pace_dynamic[team_name].get("pace_offset", 0.0)
+                else:
+                    pace_offset = CONSTRUCTORS_2026.get(team_name, {}).get("pace_offset", 0.0)
+                
+                elo_score = np.clip((elo - 1300) / 700.0, 0.0, 1.0)
+                car_score = np.clip((-pace_offset + 0.50) / 1.15, 0.0, 1.0)
+                fallback_score = (elo_score * 0.50 + car_score * 0.35) / 0.85
+                lgbm_norm.append(fallback_score)
+            lgbm_norm = np.array(lgbm_norm)
+
+        # 3. Practice weekend form (FP3) normalization
         tyre_deltas = [0.0, 0.6, 1.2, 0.0, 0.0]
-        
-        # Find best normalized FP3 time
         norm_fp3_all = {}
         for d in drivers:
             raw_fp3 = fp3_results.get(d, 75.0)
@@ -145,108 +185,132 @@ class QualifyingModel:
             norm_fp3_all[d] = raw_fp3 - tyre_deltas[np.clip(t_code, 0, 4)]
             
         best_norm_fp3 = min(norm_fp3_all.values()) if len(norm_fp3_all) > 0 else 73.5
-
+        
+        fp3_scores = []
         for d in drivers:
-            elo = driver_priors.get(d, 1500)
-            team_name = GRID_2026[d]["team"]
-            pace_offset = CONSTRUCTORS_2026.get(team_name, {}).get("pace_offset", 0.0)
-            
-            # Normalize ELO (1300 to 2000 range mapped to 0-1)
-            elo_score = np.clip((elo - 1300) / 700.0, 0.0, 1.0)
-            
-            # Normalize Car Strength (pace offsets range from -0.65 to +0.50)
-            # More negative pace offset is better car. Map it to 0-1 (higher is better)
-            car_score = np.clip((-pace_offset + 0.50) / 1.15, 0.0, 1.0)
-            
-            # Practice pace score (delta to best normalized FP3 time, where 0.0 is best)
             fp3_delta = norm_fp3_all.get(d, best_norm_fp3) - best_norm_fp3
             fp3_score = np.clip(1.0 - (fp3_delta / 3.0), 0.0, 1.0)
-            
-            # Combine components with realistic weights
-            total_score = elo_score * 0.50 + car_score * 0.35 + fp3_score * 0.15
-            
+            fp3_scores.append(fp3_score)
+        fp3_scores = np.array(fp3_scores)
+
+        # 4. Hybrid Score: 85% LightGBM Ranker Score + 15% practice pace score
+        final_scores = lgbm_norm * 0.85 + fp3_scores * 0.15
+        
+        scores = []
+        for idx, d in enumerate(drivers):
             # Add a small stochastic qualifying variance (organic session variance)
             np.random.seed(hash(d) % 10000 + int(track_temp * 10))
             variance = np.random.normal(0, 0.025)
+            scores.append((d, final_scores[idx] + variance))
             
-            scores.append((d, total_score + variance))
-
         # Sort drivers descending by score
         sorted_scores = sorted(scores, key=lambda x: x[1], reverse=True)
         predicted_grid = [x[0] for x in sorted_scores]
 
-        # 3. Determine realistic baseline qualifying pole lap time for the circuit
-        meta = CIRCUITS.get(active_circuit, CIRCUITS["canada"])
-        length = meta["length_km"]
-        ctype = meta.get("type", "balanced-speed")
+        # 5. Determine realistic baseline qualifying pole lap time for the circuit
+        base_pole_time = get_historical_pole_time(active_circuit)
         
-        # Base seconds per km derived from circuit styles
-        if ctype == "speed-drag":
-            sec_per_km = 13.5
-        elif ctype == "traction-braking":
-            sec_per_km = 14.5
-        elif ctype == "downforce-high":
-            sec_per_km = 15.2
-        elif ctype == "downforce-low":
-            sec_per_km = 16.8
-        else: # balanced
-            sec_per_km = 14.2
-            
-        base_pole_time = length * sec_per_km
-        
-        # Weather delay scaling (Light Rain adds ~7.5s, Wet adds ~15s)
         if rain_intensity == 0.5:
             base_pole_time += 7.5
         elif rain_intensity == 1.0:
             base_pole_time += 15.0
             
-        # Hotter track temperature adds minor thermal degradation delay (+0.04s per degree above 30°C)
         base_pole_time += max(0, track_temp - 30) * 0.04
 
-        # 4. Generate rank-ordered lap times with dynamic Bayesian credible intervals
-        # Gap multiplier expands overall gap spread under wet weather
-        gap_multiplier = 1.0 + rain_intensity * 1.5
-        
+        # 6. Predict lap times (quantile regression with monotonicity)
         predictions = {}
-        current_time = base_pole_time
         
-        for rank, d in enumerate(predicted_grid):
-            if rank == 0:
-                predictions[d] = {
-                    "median": current_time,
-                    "best": current_time - (0.4 * gap_multiplier),
-                    "worst": current_time + (0.6 * gap_multiplier)
-                }
-            else:
-                # Progressive, organic position gaps (P1-P2: ~0.08s, lower pack gaps broaden slightly)
-                base_gap = 0.12 / (1.0 + rank * 0.04)
-                np.random.seed(hash(d) % 5000 + rank)
-                actual_gap = base_gap * np.random.uniform(0.7, 1.3) * gap_multiplier
+        if self._using_trained_models and len(self.quantile_models) == 3:
+            # Predict gaps for each driver using the quantile models
+            q_gaps = {}
+            for q in [0.10, 0.50, 0.90]:
+                q_model = self.quantile_models[q]
+                q_gaps[q] = q_model.predict(features_df)
                 
-                current_time += actual_gap
-                
-                # Dynamic credible interval width (wider for lower/inconsistent drivers and wet weather)
-                is_rookie = GRID_2026[d]["is_rookie"]
-                interval_width = (1.0 if not is_rookie else 1.45) * gap_multiplier
+            # Build dict of predictions for each driver
+            for idx, d in enumerate(drivers):
+                best_gap = max(0.0, q_gaps[0.10][idx])
+                median_gap = max(best_gap, q_gaps[0.50][idx])
+                worst_gap = max(median_gap, q_gaps[0.90][idx])
                 
                 predictions[d] = {
-                    "median": current_time,
-                    "best": current_time - (0.4 * interval_width),
-                    "worst": current_time + (0.6 * interval_width)
+                    "best": best_gap,
+                    "median": median_gap,
+                    "worst": worst_gap
                 }
+                
+            # Enforce monotonicity along the predicted grid
+            current_median = 0.0
+            current_best = -0.4
+            current_worst = 0.6
+            gap_multiplier = 1.0 + rain_intensity * 1.5
+            
+            for rank, d in enumerate(predicted_grid):
+                pred = predictions[d]
+                if rank == 0:
+                    current_median = pred["median"]
+                    current_best = pred["best"]
+                    current_worst = pred["worst"]
+                else:
+                    min_step = 0.03 * gap_multiplier
+                    current_median = max(current_median + min_step, pred["median"])
+                    current_best = max(current_best + min_step, pred["best"])
+                    current_worst = max(current_worst + min_step, pred["worst"])
+                    
+                predictions[d] = {
+                    "best": current_best,
+                    "median": current_median,
+                    "worst": current_worst
+                }
+        else:
+            # Fallback to dynamic Bayesian gaps if models not loaded
+            gap_multiplier = 1.0 + rain_intensity * 1.5
+            current_time = base_pole_time
+            
+            for rank, d in enumerate(predicted_grid):
+                if rank == 0:
+                    predictions[d] = {
+                        "median": current_time,
+                        "best": current_time - (0.4 * gap_multiplier),
+                        "worst": current_time + (0.6 * gap_multiplier)
+                    }
+                else:
+                    base_gap = 0.12 / (1.0 + rank * 0.04)
+                    np.random.seed(hash(d) % 5000 + rank)
+                    actual_gap = base_gap * np.random.uniform(0.7, 1.3) * gap_multiplier
+                    
+                    current_time += actual_gap
+                    
+                    is_rookie = GRID_2026[d]["is_rookie"]
+                    interval_width = (1.0 if not is_rookie else 1.45) * gap_multiplier
+                    
+                    predictions[d] = {
+                        "median": current_time,
+                        "best": current_time - (0.4 * interval_width),
+                        "worst": current_time + (0.6 * interval_width)
+                    }
 
-        # 5. Compile final predictions structure sorted by predicted grid rank
+        # 7. Compile final predictions structure sorted by predicted grid rank
         sorted_predictions = []
         for rank, d in enumerate(predicted_grid):
             p = predictions[d]
+            if self._using_trained_models and len(self.quantile_models) == 3:
+                best_time = base_pole_time + p["best"]
+                median_time = base_pole_time + p["median"]
+                worst_time = base_pole_time + p["worst"]
+            else:
+                best_time = p["best"]
+                median_time = p["median"]
+                worst_time = p["worst"]
+                
             sorted_predictions.append({
                 "predicted_position": rank + 1,
                 "driver_code": d,
                 "driver_name": GRID_2026[d]["name"],
                 "team": GRID_2026[d]["team"],
-                "best_case_time": round(float(p["best"]), 3),
-                "median_time": round(float(p["median"]), 3),
-                "worst_case_time": round(float(p["worst"]), 3),
+                "best_case_time": round(float(best_time), 3),
+                "median_time": round(float(median_time), 3),
+                "worst_case_time": round(float(worst_time), 3),
             })
             
         return sorted_predictions
@@ -261,7 +325,7 @@ class MonteCarloSimulator:
         self.circuit_id = circuit_id
         self.circuit_meta = CIRCUITS[circuit_id]
         
-    def simulate_race(self, starting_grid, tyre_strategies, num_sims=10000, current_lap=0, active_state=None, rain_intensity=0.0):
+    def simulate_race(self, starting_grid, tyre_strategies, num_sims=10000, current_lap=0, active_state=None, rain_intensity=0.0, constructor_pace_dynamic=None):
         """
         Runs 10,000 simulated race runs.
         
@@ -320,7 +384,10 @@ class MonteCarloSimulator:
                     elo -= 100
                     
             team_name = GRID_2026[d]["team"]
-            pace_offset = CONSTRUCTORS_2026.get(team_name, {}).get("pace_offset", 0.0)
+            if constructor_pace_dynamic and team_name in constructor_pace_dynamic:
+                pace_offset = constructor_pace_dynamic[team_name].get("pace_offset", 0.0)
+            else:
+                pace_offset = CONSTRUCTORS_2026.get(team_name, {}).get("pace_offset", 0.0)
             
             # Base pace computation with weather delays (Damp: +8.0s, Wet: +16.0s)
             weather_pace_delay = 8.0 if rain_intensity == 0.5 else (16.0 if rain_intensity == 1.0 else 0.0)

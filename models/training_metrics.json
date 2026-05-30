@@ -1,0 +1,19 @@
+{
+  "train_years": [
+    2022,
+    2023,
+    2024
+  ],
+  "test_year": 2025,
+  "train_samples": 1348,
+  "test_samples": 471,
+  "train_ndcg5": 1.0,
+  "test_ndcg3": 0.9352,
+  "test_ndcg5": 0.8582,
+  "test_ndcg10": 0.8481,
+  "overfit_gap": 0.1418,
+  "overfit_status": "OK",
+  "q10_mae": 0.6999876543679772,
+  "q50_mae": 0.4906871489135177,
+  "q90_mae": 1.4462185204767444
+}

@@ -10,10 +10,8 @@ venv/
 .venv/
 env/
 
-# FastF1 Cache
-fastf1_cache/fastf1_http_cache.sqlite
-fastf1_cache/**/car_data.ff1pkl
-fastf1_cache/**/position_data.ff1pkl
+# FastF1 Cache (too large for GitHub; Streamlit Cloud rebuilds on demand)
+fastf1_cache/
 
 # IDE
 .vscode/
@@ -26,5 +24,17 @@ Thumbs.db
 # Streamlit
 .streamlit/secrets.toml
 
-# Generated data (re-generated on each run)
-data/*.json
+# Generated runtime data (re-generated on each run)
+data/fp3_practice_data.json
+data/qualifying_predictions.json
+data/race_simulations.json
+
+# Scratch scripts (development only)
+scratch/
+
+# NOTE: Do NOT ignore these — needed for Streamlit Cloud deployment:
+# models/                          (pre-trained ML models)
+# data/season_elo_cache.json       (Season ELO cache)
+# data/constructor_pace_cache.json (Constructor pace cache)
+# data/qualifying_history_cache.json (Qualifying history cache)
+# data/historical/                 (training features & qualifying CSVs)

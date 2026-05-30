@@ -6,6 +6,7 @@ import pandas as pd
 from src.utils import GRID_2026, CIRCUITS, get_initial_driver_priors, update_elo_ratings, format_lap_time
 from src.data_ingestion import fetch_gp_practice_data
 from src.models import QualifyingModel, MonteCarloSimulator
+from src.season_elo import compute_season_elo, compute_dynamic_constructor_pace
 
 def main():
     if hasattr(sys.stdout, "reconfigure"):
@@ -78,18 +79,30 @@ def main():
         json.dump(practice_export, f, indent=4)
     print(f"✅ {loaded_session} data ingested and saved to 'data/fp3_practice_data.json'")
 
-    # 2. Bayesian Elo Prior Updates
-    print("\n[STEP 2] Updating Bayesian Elo Ratings based on practice delta...")
-    driver_priors = get_initial_driver_priors()
-    updated_priors = update_elo_ratings(driver_priors, fp3_times)
-    print("✅ Bayesian priors updated based on teammate head-to-heads.")
+    # 2. Bayesian Elo Prior Updates (Season ELO Carryover)
+    print("\n[STEP 2] Computing Season ELO Carryover (cumulative from completed GPs)...")
+    season_elo = compute_season_elo(circuit_id)
+    dynamic_pace = compute_dynamic_constructor_pace(circuit_id)
+    updated_priors = update_elo_ratings(season_elo, fp3_times)
+    print("✅ Season ELO computed and updated with practice head-to-heads.")
+    
+    # Display ELO changes from base
+    base_priors = get_initial_driver_priors()
+    elo_changes = {d: updated_priors[d] - base_priors[d] for d in updated_priors}
+    top_movers = sorted(elo_changes.items(), key=lambda x: abs(x[1]), reverse=True)[:5]
+    print("\n  Top ELO movers (vs base):")
+    for d, delta in top_movers:
+        sign = "+" if delta >= 0 else ""
+        print(f"    {d}: {sign}{delta} (base: {base_priors[d]} -> season: {updated_priors[d]})")
 
     # 3. ML Qualifying Grid Prediction (Learning-To-Rank)
     print("\n[STEP 3] Running LightGBM Ranker and Quantile models...")
     qualy_model = QualifyingModel()
-    qualy_model.train_mock_models()
+    qualy_model.load_trained_models()
     qualy_results = qualy_model.predict_qualifying(
-        updated_priors, fp3_times, track_temp, speed_traps, tyre_codes, rain_intensity=rain_intensity
+        updated_priors, fp3_times, track_temp, speed_traps, tyre_codes,
+        rain_intensity=rain_intensity, constructor_pace_dynamic=dynamic_pace,
+        active_circuit=circuit_id
     )
     
     # Save qualifying predictions
@@ -114,7 +127,8 @@ def main():
     
     sim_engine = MonteCarloSimulator(circuit_id)
     sim_stats = sim_engine.simulate_race(
-        starting_grid, tyre_strategies, num_sims=num_sims, rain_intensity=rain_intensity
+        starting_grid, tyre_strategies, num_sims=num_sims,
+        rain_intensity=rain_intensity, constructor_pace_dynamic=dynamic_pace
     )
     
     # Save simulations output

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import requests
 from datetime import datetime, timezone, timedelta
-from .utils import CIRCUITS, GRID_2026, CONSTRUCTORS_2026
+from .utils import CIRCUITS, GRID_2026, CONSTRUCTORS_2026, get_historical_pole_time
 
 # Mapping from internal circuit_id to official FastF1 GP event name (2026 calendar)
 CIRCUIT_TO_GP_NAME = {
@@ -93,24 +93,41 @@ def get_race_status(circuit_id):
         
         if now > race_end:
             # Race is completed
-            latest_lap = total_laps
             try:
                 import fastf1
                 fastf1.Cache.enable_cache('fastf1_cache')
+                
+                # Prevent fuzzy match bugs by validating against FastF1 schedule
+                schedule = fastf1.get_event_schedule(2026)
+                event_row = schedule[schedule['EventName'].str.lower() == event_name.lower()]
+                if len(event_row) == 0:
+                    first_word = event_name.split(' ')[0].lower()
+                    event_row = schedule[schedule['EventName'].str.lower().str.contains(first_word, regex=False)]
+                if len(event_row) == 0:
+                    raise ValueError(f"GP {event_name} is not in the FastF1 2026 calendar.")
+                
                 session = fastf1.get_session(2026, event_name, 'R')
                 session.load(telemetry=False, weather=False)
+                latest_lap = total_laps
                 if len(session.laps) > 0:
                     latest_lap = int(session.laps['LapNumber'].max())
-            except:
-                pass
-                
-            return {
-                "status": "DONE",
-                "event_date": event_date_str,
-                "event_name": event_name,
-                "latest_lap": latest_lap,
-                "total_laps": total_laps
-            }
+                    
+                return {
+                    "status": "DONE",
+                    "event_date": event_date_str,
+                    "event_name": event_name,
+                    "latest_lap": latest_lap,
+                    "total_laps": total_laps
+                }
+            except Exception as e:
+                # If loading fails (no actual data exists in FastF1), mark as SOON (TBD)
+                return {
+                    "status": "SOON",
+                    "event_date": "TBD",
+                    "event_name": event_name,
+                    "latest_lap": None,
+                    "total_laps": total_laps
+                }
             
         elif now >= race_start and now <= race_end:
             # Race is currently ongoing/live
@@ -167,22 +184,29 @@ def get_race_status(circuit_id):
         race_end_estimate = race_start_estimate + timedelta(hours=2, minutes=30)
         
         if now > race_end_estimate:
-            latest_lap = total_laps
             try:
                 session = fastf1.get_session(2026, gp_name, 'R')
                 session.load(telemetry=False, weather=False)
+                latest_lap = total_laps
                 if len(session.laps) > 0:
                     latest_lap = int(session.laps['LapNumber'].max())
+                
+                return {
+                    "status": "DONE",
+                    "event_date": str(event_date.date()),
+                    "event_name": event_name,
+                    "latest_lap": latest_lap,
+                    "total_laps": total_laps
+                }
             except:
-                pass
-            
-            return {
-                "status": "DONE",
-                "event_date": str(event_date.date()),
-                "event_name": event_name,
-                "latest_lap": latest_lap,
-                "total_laps": total_laps
-            }
+                # If loading fails, return SOON/TBD
+                return {
+                    "status": "SOON",
+                    "event_date": "TBD",
+                    "event_name": event_name,
+                    "latest_lap": None,
+                    "total_laps": total_laps
+                }
         elif now >= race_start_estimate and now <= race_end_estimate:
             latest_lap = get_latest_available_lap(circuit_id)
             return {
@@ -250,6 +274,15 @@ def fetch_gp_practice_data(circuit_id, session="FP3"):
         # Resolve circuit_id to official FastF1 GP event name
         gp_name = CIRCUIT_TO_GP_NAME.get(circuit_id, circuit_id.replace('_', ' ').title())
         
+        # Prevent fuzzy match bugs by validating against FastF1 schedule
+        schedule = fastf1.get_event_schedule(year)
+        event_row = schedule[schedule['EventName'].str.lower() == gp_name.lower()]
+        if len(event_row) == 0:
+            first_word = gp_name.split(' ')[0].lower()
+            event_row = schedule[schedule['EventName'].str.lower().str.contains(first_word, regex=False)]
+        if len(event_row) == 0:
+            raise ValueError(f"GP {gp_name} is not in the FastF1 2026 calendar.")
+            
         # Download session data with fallback for Sprint format weekends
         actual_session = session
         try:
@@ -299,8 +332,8 @@ def fetch_gp_practice_data(circuit_id, session="FP3"):
         np.random.seed(42)
         circuit_meta = CIRCUITS[circuit_id]
         
-        # Dynamic base lap time anchor from circuit length (approx: length_km * 14.5s/km for F1 pace)
-        base_anchor = circuit_meta["length_km"] * 14.5
+        # Dynamic base lap time anchor from historical pole time (with practice delta of +1.8s)
+        base_anchor = get_historical_pole_time(circuit_id) + 1.8
         
         fp3_results = {}
         speed_traps = {}
@@ -365,6 +398,16 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
         fastf1.Cache.enable_cache('fastf1_cache')
         
         gp_name = CIRCUIT_TO_GP_NAME.get(circuit_id, circuit_id.replace('_', ' ').title())
+        
+        # Prevent fuzzy match bugs by validating against FastF1 schedule
+        schedule = fastf1.get_event_schedule(2026)
+        event_row = schedule[schedule['EventName'].str.lower() == gp_name.lower()]
+        if len(event_row) == 0:
+            first_word = gp_name.split(' ')[0].lower()
+            event_row = schedule[schedule['EventName'].str.lower().str.contains(first_word, regex=False)]
+        if len(event_row) == 0:
+            raise ValueError(f"GP {gp_name} is not in the FastF1 2026 calendar.")
+            
         session = fastf1.get_session(2026, gp_name, 'R')
         session.load(telemetry=False, weather=False)
         
@@ -537,6 +580,15 @@ def fetch_actual_qualifying_results(circuit_id):
         # Resolve circuit_id to official FastF1 GP event name
         gp_name = CIRCUIT_TO_GP_NAME.get(circuit_id, circuit_id.replace('_', ' ').title())
         
+        # Prevent fuzzy match bugs by validating against FastF1 schedule
+        schedule = fastf1.get_event_schedule(year)
+        event_row = schedule[schedule['EventName'].str.lower() == gp_name.lower()]
+        if len(event_row) == 0:
+            first_word = gp_name.split(' ')[0].lower()
+            event_row = schedule[schedule['EventName'].str.lower().str.contains(first_word, regex=False)]
+        if len(event_row) == 0:
+            raise ValueError(f"GP {gp_name} is not in the FastF1 2026 calendar.")
+            
         # Load Qualifying session
         ff1_session = fastf1.get_session(year, gp_name, 'Q')
         ff1_session.load(laps=False, telemetry=False, weather=False)

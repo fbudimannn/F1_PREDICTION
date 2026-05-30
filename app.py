@@ -10,6 +10,7 @@ import base64
 from src.utils import GRID_2026, CIRCUITS, get_initial_driver_priors, update_elo_ratings, format_lap_time, get_driver_color
 from src.data_ingestion import fetch_gp_practice_data, fetch_live_session_timing, fetch_actual_qualifying_results, get_race_status
 from src.models import QualifyingModel, MonteCarloSimulator
+from src.season_elo import compute_season_elo, compute_dynamic_constructor_pace
 
 DRIVER_IMAGE_MAP = {
     "ALB": "albon.avif",
@@ -329,7 +330,7 @@ st.markdown(f"<p style='color: #8f9cae; font-size: 16px; margin-bottom: 25px;'>A
 @st.cache_resource
 def load_qualy_model_v2():
     model = QualifyingModel()
-    model.train_mock_models()
+    model.load_trained_models()
     return model
 
 qualy_model = load_qualy_model_v2()
@@ -357,17 +358,31 @@ practice_export = {
 with open("data/fp3_practice_data.json", "w") as f:
     json.dump(practice_export, f, indent=4)
 
-# Initialize driver priors (Elo)
+# Initialize driver priors (Elo) using Season ELO Carryover
+# Accumulates ELO from all completed GPs before the active circuit
+@st.cache_data(ttl=300)
+def get_cached_season_elo(circuit_id):
+    return compute_season_elo(circuit_id)
+
+@st.cache_data(ttl=300)
+def get_cached_constructor_pace(circuit_id):
+    return compute_dynamic_constructor_pace(circuit_id)
+
+season_elo = get_cached_season_elo(active_circuit)
+dynamic_constructor_pace = get_cached_constructor_pace(active_circuit)
+
 if "driver_priors" not in st.session_state:
-    st.session_state.driver_priors = get_initial_driver_priors()
+    st.session_state.driver_priors = season_elo
 
 # Dynamic Bayesian Elo Rating Update based on practice head-to-heads
-# Resetting to base priors before updating to prevent cumulative drift on every page rerun
-st.session_state.driver_priors = update_elo_ratings(get_initial_driver_priors(), fp3_times)
+# Uses Season ELO (kumulatif) as the base prior instead of static base_elo
+st.session_state.driver_priors = update_elo_ratings(season_elo, fp3_times)
 
 # Calculate qualifying results globally so they are always available and persistent across tab switches
 qualy_results = qualy_model.predict_qualifying(
-    st.session_state.driver_priors, fp3_times, track_temp, speed_traps, tyre_codes, rain_intensity=rain_intensity
+    st.session_state.driver_priors, fp3_times, track_temp, speed_traps, tyre_codes,
+    rain_intensity=rain_intensity, constructor_pace_dynamic=dynamic_constructor_pace,
+    active_circuit=active_circuit
 )
 
 # Persist qualifying predictions to local data folder
@@ -503,10 +518,16 @@ with tab_qualy:
             )
         ))
         
+        y_min = float(df_qualy["best_case_time"].min() - 0.5)
+        y_max = float(df_qualy["worst_case_time"].max() + 0.5)
+        
         fig_q.update_layout(
             title="Estimated Q3 Lap Times with 90% Bayesian Credible Intervals",
             xaxis_title="Driver Name",
-            yaxis_title="Lap Time (seconds)",
+            yaxis=dict(
+                range=[y_min, y_max],
+                title="Lap Time (seconds)"
+            ),
             template="plotly_dark",
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
@@ -723,7 +744,9 @@ with tab_race:
     
     with st.spinner(f"Running {sim_iterations:,} vectorized NumPy race runs..."):
         sim_stats = sim_engine.simulate_race(
-            starting_grid, tyre_strategies, num_sims=sim_iterations, current_lap=curr_lap, active_state=active_state, rain_intensity=rain_intensity
+            starting_grid, tyre_strategies, num_sims=sim_iterations, current_lap=curr_lap,
+            active_state=active_state, rain_intensity=rain_intensity,
+            constructor_pace_dynamic=dynamic_constructor_pace
         )
         
     # Persist race simulation results to local data folder
