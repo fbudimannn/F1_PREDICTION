@@ -742,6 +742,22 @@ with tab_race:
         st.session_state.base_sc_prob = CIRCUITS[active_circuit]["sc_probability"]
         st.session_state.base_dnf_prob = CIRCUITS[active_circuit]["base_dnf_probability"]
 
+    # Detect stale inputs (changes in tyres, sliders, or controls that have not been applied)
+    is_stale = False
+    if st.session_state.sim_results is not None and "last_sim_inputs" in st.session_state:
+        last = st.session_state.last_sim_inputs
+        if (last["circuit"] != active_circuit or 
+            last["grid_source"] != grid_source_used or 
+            last["sim_iterations"] != sim_iterations or 
+            last["sim_mode"] != sim_mode or 
+            last["sc_toggle"] != sc_toggle or 
+            last["dnf_toggle"] != dnf_toggle or 
+            last["tyre_strategies"] != tyre_strategies):
+            is_stale = True
+
+    if is_stale:
+        st.warning("⚠️ **Unapplied Changes Detected:** You have modified simulation controls, tyres, or event injectors. Click **Apply Strategies & Run** below to update the simulation results.")
+
     st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
     apply_btn = st.button("⚡ Apply Strategies & Run Monte Carlo Simulation", use_container_width=True, type="primary")
 
@@ -766,6 +782,15 @@ with tab_race:
             
         # Store in session state
         st.session_state.sim_results = sim_stats
+        st.session_state.last_sim_inputs = {
+            "circuit": active_circuit,
+            "grid_source": grid_source_used,
+            "sim_iterations": sim_iterations,
+            "sim_mode": sim_mode,
+            "sc_toggle": sc_toggle,
+            "dnf_toggle": dnf_toggle,
+            "tyre_strategies": tyre_strategies.copy(),
+        }
         
         # Persist race simulation results to local data folder
         with open("data/race_simulations.json", "w") as f:
