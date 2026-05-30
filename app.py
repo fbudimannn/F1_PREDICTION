@@ -665,56 +665,57 @@ with tab_race:
         
     with col_c2:
         with st.container(border=True):
-            st.markdown("#### Strategy Configurator (Top 5 Grid)")
-            # Customize tyre strategy for top drivers dynamically
-            top_5_strats = {}
-            for idx, d in enumerate(starting_grid[:5]):
-                driver_name = GRID_2026[d]["name"]
-                # Default selection based on driver
-                default_idx = 0
-                if d == "HAM":
-                    default_idx = 1
-                elif d == "VER":
+            st.markdown("#### Strategy Configurator")
+            # Customize tyre strategy for all drivers dynamically with a scroll container
+            driver_strats = {}
+            with st.container(height=380, border=False):
+                for idx, d in enumerate(starting_grid):
+                    driver_name = GRID_2026.get(d, {}).get("name", d)
+                    # Default selection based on driver/grid position
                     default_idx = 0
-                else:
-                    default_idx = idx % 3
-                
-                strategy_options = [
-                    "Medium-Hard", 
-                    "Soft-Medium-Medium", 
-                    "Medium-Medium-Hard", 
-                    "Soft-Hard",
-                    "Intermediate-Intermediate",
-                    "Wet-Intermediate",
-                    "Intermediate-Medium",
-                    "Soft-Intermediate-Wet",
-                    "🔧 Custom Strategy..."
-                ]
-                
-                selected_opt = st.selectbox(
-                    f"{d} ({driver_name}) Strategy:", 
-                    strategy_options, 
-                    index=default_idx,
-                    key=f"strat_select_{d}"
-                )
-                
-                if selected_opt == "🔧 Custom Strategy...":
-                    custom_input = st.text_input(
-                        f"Enter custom strategy for {d} (e.g., S-M-M, M-H):", 
-                        value="Medium-Hard",
-                        key=f"strat_custom_{d}"
+                    if d == "HAM":
+                        default_idx = 1
+                    elif d == "VER":
+                        default_idx = 0
+                    else:
+                        default_idx = (idx % 3) if idx < 5 else 0 # Default Medium-Hard for lower grid
+                    
+                    strategy_options = [
+                        "Medium-Hard", 
+                        "Soft-Medium-Medium", 
+                        "Medium-Medium-Hard", 
+                        "Soft-Hard",
+                        "Intermediate-Intermediate",
+                        "Wet-Intermediate",
+                        "Intermediate-Medium",
+                        "Soft-Intermediate-Wet",
+                        "🔧 Custom Strategy..."
+                    ]
+                    
+                    selected_opt = st.selectbox(
+                        f"{d} ({driver_name}) Strategy:", 
+                        strategy_options, 
+                        index=default_idx,
+                        key=f"strat_select_{d}"
                     )
-                    top_5_strats[d] = custom_input
-                else:
-                    top_5_strats[d] = selected_opt
-                
-                # Dynamic visual feedback of parsed strategy
-                parsed_compounds = parse_strategy(top_5_strats[d])
-                badge_html = ""
-                for compound in parsed_compounds:
-                    c_class = f"badge-{compound.lower()}"
-                    badge_html += f"<span class='strategy-badge {c_class}'>{compound}</span>"
-                st.markdown(f"<div style='margin-bottom: 12px;'>{badge_html}</div>", unsafe_allow_html=True)
+                    
+                    if selected_opt == "🔧 Custom Strategy...":
+                        custom_input = st.text_input(
+                            f"Enter custom strategy for {d} (e.g., S-M-M, M-H):", 
+                            value="Medium-Hard",
+                            key=f"strat_custom_{d}"
+                        )
+                        driver_strats[d] = custom_input
+                    else:
+                        driver_strats[d] = selected_opt
+                    
+                    # Dynamic visual feedback of parsed strategy
+                    parsed_compounds = parse_strategy(driver_strats[d])
+                    badge_html = ""
+                    for compound in parsed_compounds:
+                        c_class = f"badge-{compound.lower()}"
+                        badge_html += f"<span class='strategy-badge {c_class}'>{compound}</span>"
+                    st.markdown(f"<div style='margin-bottom: 12px;'>{badge_html}</div>", unsafe_allow_html=True)
         
     with col_c3:
         with st.container(border=True):
@@ -725,8 +726,8 @@ with tab_race:
     # Compile strategies map dynamically
     tyre_strategies = {}
     for d in starting_grid:
-        if d in top_5_strats:
-            tyre_strategies[d] = parse_strategy(top_5_strats[d])
+        if d in driver_strats:
+            tyre_strategies[d] = parse_strategy(driver_strats[d])
         else:
             # Default strategy based on grid position
             tyre_strategies[d] = ["Medium", "Hard"]
