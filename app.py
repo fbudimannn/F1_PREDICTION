@@ -596,31 +596,39 @@ with tab_race:
     
     with col_c1:
         with st.container(border=True):
-            st.markdown("#### Simulation Controls")
-            sim_iterations = st.selectbox("Simulation Runs:", [5000, 10000, 20000], index=1)
+            st.markdown("#### Simulation Controls", help="Adjust the foundational settings for the Monte Carlo simulator, including run counts, pre-race vs mid-race modes, and starting grid order.")
+            sim_iterations = st.selectbox(
+                "Simulation Runs:", 
+                [5000, 10000, 20000], 
+                index=1,
+                help="The number of randomized race runs. Higher values (e.g. 20,000) improve statistical precision and smooth out noise in win probabilities, but take slightly longer to execute."
+            )
             
             # Build mode options based on race status
             if race_status["status"] == "ONGOING":
                 # Force live mode with badge
                 st.markdown(f"<span class='badge-ongoing'>🔴 LIVE — LAP {mid_lap}/{circuit_data['laps']}</span>", unsafe_allow_html=True)
-                sim_mode = st.radio("Simulation Mode:", [
-                    f"🔴 Live Race Tracking (Lap {mid_lap})",
-                    "Standard Pre-Race Predictor"
-                ])
+                sim_mode = st.radio(
+                    "Simulation Mode:", 
+                    [f"🔴 Live Race Tracking (Lap {mid_lap})", "Standard Pre-Race Predictor"],
+                    help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Live Race Tracking downloads current live timing from the API and simulates the remainder of the race from that exact lap forward."
+                )
             elif race_status["status"] == "DONE":
                 # Allow user to pick any lap via slider
                 st.markdown(f"<span class='badge-done'>✅ COMPLETED</span>", unsafe_allow_html=True)
-                sim_mode = st.radio("Simulation Mode:", [
-                    "Standard Pre-Race Predictor",
-                    "Replay Mid-Race State"
-                ])
+                sim_mode = st.radio(
+                    "Simulation Mode:", 
+                    ["Standard Pre-Race Predictor", "Replay Mid-Race State"],
+                    help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Replay Mid-Race State allows you to select any completed lap via slider and run simulations from that lap forward."
+                )
                 if sim_mode == "Replay Mid-Race State":
                     mid_lap = st.slider(
                         "Select Lap to Replay:",
                         min_value=1,
                         max_value=race_status["latest_lap"],
                         value=circuit_data["laps"] // 2,
-                        step=1
+                        step=1,
+                        help="Pick which lap to pause the race and run simulations from."
                     )
             else:
                 # SOON: only pre-race mode available
@@ -633,7 +641,8 @@ with tab_race:
                 grid_source = st.radio(
                     "Starting Grid Source:",
                     ["Use Predicted Qualifying Grid (ML)", "Use Actual Saturday Qualifying Classification (API)"],
-                    index=0
+                    index=0,
+                    help="Choose whether to build the race starting order using our LightGBM Machine Learning grid prediction (Bayesian Prior + FP3 Form) or Saturday's official qualifying classification from the FastF1 API."
                 )
             else:
                 grid_source = "Use Live Running Order"
@@ -665,7 +674,7 @@ with tab_race:
         
     with col_c2:
         with st.container(border=True):
-            st.markdown("#### Strategy Configurator")
+            st.markdown("#### Strategy Configurator", help="Customize tyre strategy profiles (tyre compound and sequence) for every driver. The physics engine models degradation curves, thermal degradation, grip loss, and pit stop overhead dynamically.")
             # Customize tyre strategy for all drivers dynamically with a scroll container
             driver_strats = {}
             with st.container(height=380, border=False):
@@ -696,14 +705,16 @@ with tab_race:
                         f"{d} ({driver_name}) Strategy:", 
                         strategy_options, 
                         index=default_idx,
-                        key=f"strat_select_{d}"
+                        key=f"strat_select_{d}",
+                        help=f"Select a tyre strategy compound sequence for {driver_name}."
                     )
                     
                     if selected_opt == "🔧 Custom Strategy...":
                         custom_input = st.text_input(
                             f"Enter custom strategy for {d} (e.g., S-M-M, M-H):", 
                             value="Medium-Hard",
-                            key=f"strat_custom_{d}"
+                            key=f"strat_custom_{d}",
+                            help="Type custom compounds separated by hyphens (e.g., S-M-M for Soft-Medium-Medium, M-H for Medium-Hard). Compounds: S (Soft), M (Medium), H (Hard), I (Intermediate), W (Wet)."
                         )
                         driver_strats[d] = custom_input
                     else:
@@ -719,9 +730,23 @@ with tab_race:
         
     with col_c3:
         with st.container(border=True):
-            st.markdown("#### Circuit Event Injectors")
-            sc_toggle = st.slider("Safety Car Probability Multiplier:", min_value=0.5, max_value=2.0, value=1.0, step=0.1)
-            dnf_toggle = st.slider("DNF Baseline Multiplier:", min_value=0.5, max_value=2.0, value=1.0, step=0.1)
+            st.markdown("#### Circuit Event Injectors", help="Inject unexpected events into the race simulations. This modifies baseline probabilities for Safety Cars and mechanical/crash retirements (DNFs) derived from historical track data.")
+            sc_toggle = st.slider(
+                "Safety Car Probability Multiplier:", 
+                min_value=0.5, 
+                max_value=2.0, 
+                value=1.0, 
+                step=0.1,
+                help="Scales the likelihood of Safety Car deployments. A multiplier of 1.5x increases the chance of SC incidents by 50% based on historical rates for this circuit."
+            )
+            dnf_toggle = st.slider(
+                "DNF Baseline Multiplier:", 
+                min_value=0.5, 
+                max_value=2.0, 
+                value=1.0, 
+                step=0.1,
+                help="Scales the likelihood of crashes or engine failures causing retirements (DNFs). Useful to model chaotic/high-risk race conditions."
+            )
         
     # Compile strategies map dynamically
     tyre_strategies = {}
