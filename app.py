@@ -735,24 +735,44 @@ with tab_race:
     # Render starting grid source info badge
     st.info(f"🚦 **Starting Grid Status:** Using **{grid_source_used}** as starting order")
 
-    # Execute simulation
-    sim_meta = CIRCUITS[active_circuit]
-    # Apply sliders to metadata
-    sim_meta["sc_probability"] *= sc_toggle
-    sim_meta["base_dnf_probability"] *= dnf_toggle
-    
-    sim_engine = MonteCarloSimulator(active_circuit)
-    
-    with st.spinner(f"Running {sim_iterations:,} vectorized NumPy race runs..."):
-        sim_stats = sim_engine.simulate_race(
-            starting_grid, tyre_strategies, num_sims=sim_iterations, current_lap=curr_lap,
-            active_state=active_state, rain_intensity=rain_intensity,
-            constructor_pace_dynamic=dynamic_constructor_pace
-        )
+    # State management to prevent automatic rerun of Monte Carlo simulation when widgets change
+    if "sim_results" not in st.session_state or st.session_state.get("sim_circuit") != active_circuit:
+        st.session_state.sim_results = None
+        st.session_state.sim_circuit = active_circuit
+        st.session_state.base_sc_prob = CIRCUITS[active_circuit]["sc_probability"]
+        st.session_state.base_dnf_prob = CIRCUITS[active_circuit]["base_dnf_probability"]
+
+    st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+    apply_btn = st.button("⚡ Apply Strategies & Run Monte Carlo Simulation", use_container_width=True, type="primary")
+
+    # Run if button clicked OR if we have no cached results yet (first load of this circuit)
+    should_run = apply_btn or (st.session_state.sim_results is None)
+
+    if should_run:
+        # Execute simulation
+        sim_meta = CIRCUITS[active_circuit]
+        # Reset to base to avoid compounding multiplier across runs
+        sim_meta["sc_probability"] = st.session_state.base_sc_prob * sc_toggle
+        sim_meta["base_dnf_probability"] = st.session_state.base_dnf_prob * dnf_toggle
         
-    # Persist race simulation results to local data folder
-    with open("data/race_simulations.json", "w") as f:
-        json.dump(sim_stats, f, indent=4)
+        sim_engine = MonteCarloSimulator(active_circuit)
+        
+        with st.spinner(f"Running {sim_iterations:,} vectorized NumPy race runs..."):
+            sim_stats = sim_engine.simulate_race(
+                starting_grid, tyre_strategies, num_sims=sim_iterations, current_lap=curr_lap,
+                active_state=active_state, rain_intensity=rain_intensity,
+                constructor_pace_dynamic=dynamic_constructor_pace
+            )
+            
+        # Store in session state
+        st.session_state.sim_results = sim_stats
+        
+        # Persist race simulation results to local data folder
+        with open("data/race_simulations.json", "w") as f:
+            json.dump(sim_stats, f, indent=4)
+    else:
+        # Load from session state cache
+        sim_stats = st.session_state.sim_results
         
     # Display results
     df_sim = pd.DataFrame.from_dict(sim_stats, orient='index').reset_index().rename(columns={"index": "driver_code"})
