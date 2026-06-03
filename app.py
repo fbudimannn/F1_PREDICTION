@@ -70,6 +70,9 @@ def parse_strategy(strat_str):
         if t in mapping:
             parsed.append(mapping[t])
         else:
+            # Skip character-level fallback if the token looks like a special label
+            if t in ["only", "no", "pit", "stint", "zero"]:
+                continue
             for char in t:
                 if char in mapping:
                     parsed.append(mapping[char])
@@ -137,6 +140,15 @@ st.markdown("""
     .card:hover, div[data-testid="stVerticalBlockBorderWrapper"]:hover {
         border-color: rgba(255, 24, 1, 0.4) !important;
         box-shadow: 0 8px 32px 0 rgba(255, 24, 1, 0.1) !important;
+    }
+    
+    /* Circuit Layout SVG Glow & Hover Effect */
+    .circuit-svg {
+        transition: all 0.3s ease-in-out !important;
+    }
+    .circuit-svg:hover {
+        filter: drop-shadow(0 0 14px rgba(255, 24, 1, 0.75)) !important;
+        transform: scale(1.05);
     }
     
     /* Neon Red Glowing Accents */
@@ -226,6 +238,33 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Dynamic custom multiselect tag colors (matching constructor colors)
+css_rules = []
+for code in GRID_2026.keys():
+    color = get_driver_color(code)
+    hex_str = color.lstrip('#')
+    r = int(hex_str[0:2], 16)
+    g = int(hex_str[2:4], 16)
+    b = int(hex_str[4:6], 16)
+    brightness = (r * 299 + g * 587 + b * 114) / 1000
+    text_color = "#0d0f12" if brightness > 150 else "#f0f3f6"
+    css_rules.append(f"""
+    span[data-baseweb="tag"]:has(span[title^="{code} "]) {{
+        background-color: {color} !important;
+        border-color: {color} !important;
+    }}
+    span[data-baseweb="tag"]:has(span[title^="{code} "]) span {{
+        color: {text_color} !important;
+    }}
+    span[data-baseweb="tag"]:has(span[title^="{code} "]) svg {{
+        fill: {text_color} !important;
+        color: {text_color} !important;
+    }}
+    """)
+st.markdown(f"<style>{''.join(css_rules)}</style>", unsafe_allow_html=True)
+
+
+
 # 3. Sidebar Configuration
 if os.path.exists("logo f1.png"):
     st.sidebar.image("logo f1.png", use_container_width=True)
@@ -260,43 +299,211 @@ else:
     st.sidebar.markdown(f"<small style='color: #ffd740;'>Race Day: {race_status['event_date']}</small>", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
+st.sidebar.markdown("### ⚙️ Simulation Mode")
+
+# Default lap target based on status
+if race_status["status"] == "ONGOING" and race_status["latest_lap"] is not None:
+    default_mid_lap = race_status["latest_lap"]
+elif race_status["status"] == "DONE" and race_status["latest_lap"] is not None:
+    default_mid_lap = circuit_data["laps"] // 2  # Default to midpoint for replay
+else:
+    default_mid_lap = circuit_data["laps"] // 2
+
+# Resolve active mode and mid-lap target
+sim_mode = "Standard Pre-Race Predictor"
+mid_lap = default_mid_lap
+
+if race_status["status"] == "ONGOING":
+    sim_mode = st.sidebar.radio(
+        "Select Mode:", 
+        [f"🔴 Live Race Tracking (Lap {default_mid_lap})", "Standard Pre-Race Predictor"],
+        help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Live Race Tracking simulates the remainder of the race from that exact lap forward.",
+        key="sim_mode_sidebar"
+    )
+elif race_status["status"] == "DONE":
+    sim_mode = st.sidebar.radio(
+        "Select Mode:", 
+        ["Standard Pre-Race Predictor", "Replay Mid-Race State"],
+        help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Replay Mid-Race State allows you to select any completed lap via slider and run simulations from that lap forward.",
+        key="sim_mode_sidebar"
+    )
+    if sim_mode == "Replay Mid-Race State":
+        mid_lap = st.sidebar.slider(
+            "Select Lap to Replay:",
+            min_value=1,
+            max_value=race_status["latest_lap"],
+            value=default_mid_lap,
+            step=1,
+            help="Pick which lap to pause the race and run simulations from.",
+            key="mid_lap_sidebar"
+        )
+else:
+    st.sidebar.info("🔒 Live tracking will be available once the race starts.")
+    sim_mode = "Standard Pre-Race Predictor"
+
+# Track live mode state and fetch live telemetry early
+is_live_mode = sim_mode != "Standard Pre-Race Predictor"
+active_state = None
+if is_live_mode:
+    active_state = fetch_live_session_timing(active_circuit, active_lap=mid_lap)
+
+# Auto-Sync Strategy Dropdowns with Current Tyre on mode/lap changes
+current_sync_key = f"{active_circuit}_{mid_lap}" if is_live_mode else "pre-race"
+if "last_synced_live_state" not in st.session_state:
+    st.session_state.last_synced_live_state = None
+
+if st.session_state.last_synced_live_state != current_sync_key:
+    if is_live_mode and active_state is not None and "compounds" in active_state:
+        active_drivers = active_state.get("sorted_drivers", [])
+        for idx, d in enumerate(active_drivers):
+            if d in GRID_2026.keys():
+                is_dnf = d in active_state.get("dnfs", [])
+                if not is_dnf:
+                    curr_compound = active_state["compounds"][idx]
+                    
+                    # Map to a default template that contains/starts with the current compound
+                    if curr_compound == "Soft":
+                        mapped_strat = "Soft-Hard"
+                    elif curr_compound == "Medium":
+                        mapped_strat = "Medium-Hard"
+                    elif curr_compound == "Hard":
+                        mapped_strat = "Hard Only"
+                    elif curr_compound == "Intermediate":
+                        mapped_strat = "Intermediate-Intermediate"
+                    elif curr_compound == "Wet":
+                        mapped_strat = "Wet-Intermediate"
+                    else:
+                        mapped_strat = "Medium-Hard"
+                        
+                    st.session_state[f"strat_select_{d}"] = mapped_strat
+    st.session_state.last_synced_live_state = current_sync_key
+
+
+st.sidebar.markdown("---")
 st.sidebar.markdown(f"### 📍 Circuit Specifications")
 st.sidebar.markdown(f"**Laps:** {circuit_data['laps']} | **Length:** {circuit_data['length_km']} km")
 st.sidebar.markdown(f"**Safety Car Rate:** {int(circuit_data['sc_probability']*100)}%")
 st.sidebar.markdown(f"**Overtaking:** {'Easy/Moderate' if circuit_data['overtaking_index'] > 0.5 else 'Very Hard'}")
 
+# Circuit Layout SVG Display mapping and rendering (glowing white outline)
+CIRCUIT_SVG_MAP = {
+    "australia": "melbourne-2",
+    "china": "shanghai-1",
+    "japan": "suzuka-2",
+    "bahrain": "bahrain-1",
+    "saudi_arabia": "jeddah-1",
+    "miami": "miami-1",
+    "canada": "montreal-6",
+    "monaco": "monaco-6",
+    "barcelona": "catalunya-6",
+    "austria": "spielberg-3",
+    "great_britain": "silverstone-8",
+    "belgium": "spa-francorchamps-4",
+    "hungary": "hungaroring-3",
+    "netherlands": "zandvoort-5",
+    "italy": "monza-7",
+    "spain_madrid": "madring-1",
+    "azerbaijan": "baku-1",
+    "singapore": "marina-bay-4",
+    "united_states": "austin-1",
+    "mexico": "mexico-city-3",
+    "brazil": "interlagos-2",
+    "las_vegas": "las-vegas-1",
+    "qatar": "lusail-1",
+    "abu_dhabi": "yas-marina-2",
+}
+
+layout_id = CIRCUIT_SVG_MAP.get(active_circuit)
+if layout_id:
+    svg_url = f"https://raw.githubusercontent.com/julesr0y/f1-circuits-svg/main/circuits/detailed/white-outline/{layout_id}.svg"
+    st.sidebar.markdown(f'<div class="circuit-layout-container" style="text-align: center; margin-top: 15px; margin-bottom: 5px;"><img src="{svg_url}" class="circuit-svg" style="max-height: 160px; width: auto; filter: drop-shadow(0 0 8px rgba(255, 24, 1, 0.45));" alt="{circuit_data["name"]} Layout" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'none\';"><div style="font-size: 10px; color: #8f9cae; margin-top: 6px;">{circuit_data["name"]} Track Layout</div></div>', unsafe_allow_html=True)
+
 st.sidebar.markdown("---")
-st.sidebar.markdown(f"### ☁️ Environmental Settings")
-weather_condition = st.sidebar.selectbox(
-    "Weather Condition:",
-    options=["Dry", "Damp / Light Rain", "Wet / Heavy Rain"],
-    index=0
-)
+# Environmental Settings rendering (Conditional)
+if is_live_mode and active_state is not None:
+    weather_condition = active_state.get("weather_condition", "Dry")
+    track_temp = active_state.get("track_temp", 28.0)
+    
+    # Map weather to rain_intensity
+    rain_intensity = 0.0
+    if weather_condition == "Damp / Light Rain":
+        rain_intensity = 0.5
+    elif weather_condition == "Wet / Heavy Rain":
+        rain_intensity = 1.0
+        
+    # Render Locked Weather Card
+    weather_icon = "☀️" if "Dry" in weather_condition else ("🌧️" if "Wet" in weather_condition else "☁️")
+    st.sidebar.markdown(f"### ☁️ Environmental Settings")
+    st.sidebar.markdown(f"""
+    <div style="background: rgba(255, 24, 1, 0.05); border: 1px solid rgba(255, 24, 1, 0.25); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+        <div style="font-size: 11px; font-weight: 800; color: #ff1801; letter-spacing: 1px; margin-bottom: 5px;">🟢 LIVE TELEMETRY ACTIVE</div>
+        <div style="font-size: 15px; font-weight: 600; color: #f0f3f6; display: flex; align-items: center; gap: 8px;">
+            <span>{weather_icon}</span>
+            <span>{weather_condition}</span>
+        </div>
+        <div style="font-size: 13px; color: #8f9cae; margin-top: 4px;">
+            🌡️ <strong>Track Temp:</strong> {track_temp} °C
+        </div>
+        <div style="font-size: 10px; color: #8f9cae; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; line-height: 1.3;">
+            This is the official weather condition recorded at <strong>Lap {mid_lap}</strong> of the race. Manual overrides are disabled.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    st.sidebar.markdown(f"### ☁️ Environmental Settings")
+    weather_condition = st.sidebar.selectbox(
+        "Weather Condition:",
+        options=["Dry", "Damp / Light Rain", "Wet / Heavy Rain"],
+        index=0,
+        key="weather_condition_select"
+    )
+    
+    # Map weather to rain_intensity and default track temp
+    rain_intensity = 0.0
+    default_temp = 28
+    if weather_condition == "Damp / Light Rain":
+        rain_intensity = 0.5
+        default_temp = 20
+    elif weather_condition == "Wet / Heavy Rain":
+        rain_intensity = 1.0
+        default_temp = 16
+        
+    if "track_temp" not in st.session_state or st.session_state.get("prev_weather") != weather_condition:
+        st.session_state.track_temp = default_temp
+        st.session_state.prev_weather = weather_condition
+        
+    track_temp = st.sidebar.slider(
+        "Track Temperature (°C):", 
+        min_value=15, 
+        max_value=55, 
+        value=int(st.session_state.track_temp), 
+        step=1,
+        key="track_temp_slider"
+    )
+    st.session_state.track_temp = track_temp
 
-# Map weather to rain_intensity and default track temp
-rain_intensity = 0.0
-default_temp = 28
-if weather_condition == "Damp / Light Rain":
-    rain_intensity = 0.5
-    default_temp = 20
-elif weather_condition == "Wet / Heavy Rain":
-    rain_intensity = 1.0
-    default_temp = 16
+# Auto-Sync Strategy Logic on Weather Change
+if "applied_weather" not in st.session_state:
+    st.session_state.applied_weather = weather_condition
 
-# Keep track of track_temp globally using session state to prevent tab unmounting bugs
-if "track_temp" not in st.session_state or st.session_state.get("prev_weather") != weather_condition:
-    st.session_state.track_temp = default_temp
-    st.session_state.prev_weather = weather_condition
-
-track_temp = st.sidebar.slider(
-    "Track Temperature (°C):", 
-    min_value=15, 
-    max_value=55, 
-    value=int(st.session_state.track_temp), 
-    step=1,
-    key="track_temp_slider"
-)
-st.session_state.track_temp = track_temp
+if st.session_state.applied_weather != weather_condition:
+    # Weather changed!
+    # Update strategy dropdown selections in session state for all drivers
+    if weather_condition == "Wet / Heavy Rain":
+        new_strat = "Wet-Intermediate"
+    elif weather_condition == "Damp / Light Rain":
+        new_strat = "Intermediate-Intermediate"
+    else:
+        new_strat = "Medium-Hard"
+        
+    for d in GRID_2026.keys():
+        st.session_state[f"strat_select_{d}"] = new_strat
+        
+    # Save the new weather state
+    st.session_state.applied_weather = weather_condition
+    
+    # Show toast
+    st.toast(f"🌧️ Strategies auto-updated for {weather_condition} conditions", icon="⚠️")
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🔄 Operations")
@@ -579,17 +786,8 @@ with tab_race:
     
     # Setup live session state if chosen
     starting_grid = [p["driver_code"] for p in qualy_results]
-    active_state = None
     curr_lap = 0
     grid_source_used = "ML Prediction"
-    
-    # Determine dynamic lap target based on race status
-    if race_status["status"] == "ONGOING" and race_status["latest_lap"] is not None:
-        mid_lap = race_status["latest_lap"]
-    elif race_status["status"] == "DONE" and race_status["latest_lap"] is not None:
-        mid_lap = circuit_data["laps"] // 2  # Default to midpoint for replay
-    else:
-        mid_lap = circuit_data["laps"] // 2
     
     # Control Options
     col_c1, col_c2, col_c3 = st.columns([1, 1, 1])
@@ -604,59 +802,26 @@ with tab_race:
                 help="The number of randomized race runs. Higher values (e.g. 20,000) improve statistical precision and smooth out noise in win probabilities, but take slightly longer to execute."
             )
             
-            # Build mode options based on race status
-            if race_status["status"] == "ONGOING":
-                # Force live mode with badge
-                st.markdown(f"<span class='badge-ongoing'>🔴 LIVE — LAP {mid_lap}/{circuit_data['laps']}</span>", unsafe_allow_html=True)
-                sim_mode = st.radio(
-                    "Simulation Mode:", 
-                    [f"🔴 Live Race Tracking (Lap {mid_lap})", "Standard Pre-Race Predictor"],
-                    help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Live Race Tracking downloads current live timing from the API and simulates the remainder of the race from that exact lap forward."
-                )
-            elif race_status["status"] == "DONE":
-                # Allow user to pick any lap via slider
-                st.markdown(f"<span class='badge-done'>✅ COMPLETED</span>", unsafe_allow_html=True)
-                sim_mode = st.radio(
-                    "Simulation Mode:", 
-                    ["Standard Pre-Race Predictor", "Replay Mid-Race State"],
-                    help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Replay Mid-Race State allows you to select any completed lap via slider and run simulations from that lap forward."
-                )
-                if sim_mode == "Replay Mid-Race State":
-                    mid_lap = st.slider(
-                        "Select Lap to Replay:",
-                        min_value=1,
-                        max_value=race_status["latest_lap"],
-                        value=circuit_data["laps"] // 2,
-                        step=1,
-                        help="Pick which lap to pause the race and run simulations from."
-                    )
+            # Display current simulation mode details (which are set in the sidebar)
+            if is_live_mode:
+                st.markdown(f"**Simulation Mode:** `Live / Replay`")
+                st.markdown(f"**Target Lap:** `Lap {mid_lap}`")
+                grid_source = "Use Live Running Order"
             else:
-                # SOON: only pre-race mode available
-                st.markdown(f"<span class='badge-soon'>📅 UPCOMING</span>", unsafe_allow_html=True)
-                st.caption(f"Race Day: {race_status['event_date']}")
-                sim_mode = "Standard Pre-Race Predictor"
-                st.info("🔒 Live tracking will be available once the race starts.")
-            
-            if sim_mode == "Standard Pre-Race Predictor":
+                st.markdown(f"**Simulation Mode:** `Standard Pre-Race`")
                 grid_source = st.radio(
                     "Starting Grid Source:",
                     ["Use Predicted Qualifying Grid (ML)", "Use Actual Saturday Qualifying Classification (API)"],
                     index=0,
                     help="Choose whether to build the race starting order using our LightGBM Machine Learning grid prediction (Bayesian Prior + FP3 Form) or Saturday's official qualifying classification from the FastF1 API."
                 )
-            else:
-                grid_source = "Use Live Running Order"
             
-    # Determine if we are in live/replay mid-race mode
-    is_live_mode = sim_mode in [f"🔴 Live Race Tracking (Lap {mid_lap})", "Replay Mid-Race State"]
-    
-    if is_live_mode:
+    if is_live_mode and active_state is not None:
         curr_lap = mid_lap
-        active_state = fetch_live_session_timing(active_circuit, active_lap=mid_lap)
         starting_grid = active_state["sorted_drivers"]
         data_src = active_state.get("data_source", "Unknown")
         grid_source_used = f"Live Lap {mid_lap} ({data_src})"
-    elif grid_source == "Use Actual Saturday Qualifying Classification (API)":
+    elif not is_live_mode and grid_source == "Use Actual Saturday Qualifying Classification (API)":
         actual_grid = get_cached_actual_qualifying_results(active_circuit)
         if actual_grid:
             starting_grid = actual_grid
@@ -675,7 +840,76 @@ with tab_race:
     with col_c2:
         with st.container(border=True):
             st.markdown("#### Strategy Configurator", help="Customize tyre strategy profiles (tyre compound and sequence) for every driver. The physics engine models degradation curves, thermal degradation, grip loss, and pit stop overhead dynamically.")
-            # Customize tyre strategy for all drivers dynamically with a scroll container
+            
+            # --- ⚡ BULK APPLY STRATEGY CONTROLLER ---
+            st.markdown("##### ⚡ Bulk Apply Strategy")
+            col_bulk1, col_bulk2 = st.columns([1, 1])
+            with col_bulk1:
+                bulk_mode = st.selectbox(
+                    "Bulk Mode:",
+                    ["No Bulk Action", "Apply to All Drivers", "Apply to Selected Drivers"],
+                    key="bulk_mode"
+                )
+            with col_bulk2:
+                bulk_options = [
+                    "Medium-Hard", 
+                    "Soft-Medium-Medium", 
+                    "Medium-Medium-Hard", 
+                    "Soft-Hard",
+                    "Intermediate-Intermediate",
+                    "Wet-Intermediate",
+                    "Intermediate-Medium",
+                    "Soft-Intermediate-Wet",
+                    "Soft Only",
+                    "Medium Only",
+                    "Hard Only",
+                    "Intermediate Only",
+                    "Wet Only",
+                    "🔧 Custom Strategy..."
+                ]
+                bulk_strat = st.selectbox(
+                    "Strategy to Apply:",
+                    bulk_options,
+                    key="bulk_strat",
+                    disabled=(bulk_mode == "No Bulk Action")
+                )
+            
+            custom_bulk_val = ""
+            if bulk_mode != "No Bulk Action" and bulk_strat == "🔧 Custom Strategy...":
+                custom_bulk_val = st.text_input(
+                    "Enter Custom Bulk Strategy (e.g. S-H-S):",
+                    value="Medium-Hard",
+                    key="custom_bulk_val",
+                    help="Type custom compounds separated by hyphens (e.g. S-H-S). Compounds: S (Soft), M (Medium), H (Hard), I (Intermediate), W (Wet)."
+                )
+                
+            selected_bulk_drivers = []
+            if bulk_mode == "Apply to Selected Drivers":
+                selected_bulk_drivers = st.multiselect(
+                    "Select Target Drivers:",
+                    options=starting_grid,
+                    format_func=lambda x: f"{x} ({GRID_2026.get(x, {}).get('name', x)})",
+                    key="bulk_drivers"
+                )
+                
+            if bulk_mode != "No Bulk Action":
+                if st.button("⚡ Apply Bulk Strategy", use_container_width=True):
+                    targets = starting_grid if bulk_mode == "Apply to All Drivers" else selected_bulk_drivers
+                    if bulk_mode == "Apply to Selected Drivers" and not targets:
+                         st.warning("⚠️ Please select at least one driver to apply the strategy.")
+                    else:
+                         applied_value = custom_bulk_val if bulk_strat == "🔧 Custom Strategy..." else bulk_strat
+                         for d in targets:
+                             st.session_state[f"strat_select_{d}"] = bulk_strat
+                             if bulk_strat == "🔧 Custom Strategy...":
+                                 st.session_state[f"strat_custom_{d}"] = applied_value
+                                 
+                         st.toast(f"⚡ Bulk strategy '{applied_value}' applied successfully!", icon="✅")
+                         st.rerun()
+                         
+            st.markdown("<div style='margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;'></div>", unsafe_allow_html=True)
+            
+            # --- INDIVIDUAL DRIVER STRATEGIES ---
             driver_strats = {}
             with st.container(height=380, border=False):
                 for idx, d in enumerate(starting_grid):
@@ -698,6 +932,11 @@ with tab_race:
                         "Wet-Intermediate",
                         "Intermediate-Medium",
                         "Soft-Intermediate-Wet",
+                        "Soft Only",
+                        "Medium Only",
+                        "Hard Only",
+                        "Intermediate Only",
+                        "Wet Only",
                         "🔧 Custom Strategy..."
                     ]
                     
@@ -720,6 +959,23 @@ with tab_race:
                     else:
                         driver_strats[d] = selected_opt
                     
+                    # If in Live/Replay mode, display their current live tyre status
+                    if is_live_mode and active_state is not None:
+                        active_drivers = active_state.get("sorted_drivers", [])
+                        if d in active_drivers:
+                            d_idx = active_drivers.index(d)
+                            is_dnf = d in active_state.get("dnfs", [])
+                            
+                            if is_dnf:
+                                st.markdown("<div style='margin-top: -8px; margin-bottom: 8px;'><span style='color: #8f9cae; font-size: 12px; font-weight: 600;'>❌ Retired / DNF</span></div>", unsafe_allow_html=True)
+                            else:
+                                if "compounds" in active_state:
+                                    compound = active_state["compounds"][d_idx]
+                                    age = active_state["tyre_ages"][d_idx]
+                                    c_class = f"badge-{compound.lower()}"
+                                    tyre_html = f"<div style='margin-top: -8px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;'><span style='font-size: 11px; color: #8f9cae;'>Current:</span><span class='strategy-badge {c_class}'>{compound}</span><span style='font-size: 11px; color: #8f9cae;'>({age} laps old)</span></div>"
+                                    st.markdown(tyre_html, unsafe_allow_html=True)
+                                    
                     # Dynamic visual feedback of parsed strategy
                     parsed_compounds = parse_strategy(driver_strats[d])
                     badge_html = ""
@@ -727,7 +983,7 @@ with tab_race:
                         c_class = f"badge-{compound.lower()}"
                         badge_html += f"<span class='strategy-badge {c_class}'>{compound}</span>"
                     st.markdown(f"<div style='margin-bottom: 12px;'>{badge_html}</div>", unsafe_allow_html=True)
-        
+                    
     with col_c3:
         with st.container(border=True):
             st.markdown("#### Circuit Event Injectors", help="Inject unexpected events into the race simulations. This modifies baseline probabilities for Safety Cars and mechanical/crash retirements (DNFs) derived from historical track data.")
@@ -777,7 +1033,9 @@ with tab_race:
             last["sim_mode"] != sim_mode or 
             last["sc_toggle"] != sc_toggle or 
             last["dnf_toggle"] != dnf_toggle or 
-            last["tyre_strategies"] != tyre_strategies):
+            last["tyre_strategies"] != tyre_strategies or
+            last.get("weather_condition") != weather_condition or
+            last.get("track_temp") != track_temp):
             is_stale = True
 
     if is_stale:
@@ -815,6 +1073,8 @@ with tab_race:
             "sc_toggle": sc_toggle,
             "dnf_toggle": dnf_toggle,
             "tyre_strategies": tyre_strategies.copy(),
+            "weather_condition": weather_condition,
+            "track_temp": track_temp,
         }
         
         # Persist race simulation results to local data folder

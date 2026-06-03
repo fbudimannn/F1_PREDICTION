@@ -409,7 +409,7 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
             raise ValueError(f"GP {gp_name} is not in the FastF1 2026 calendar.")
             
         session = fastf1.get_session(2026, gp_name, 'R')
-        session.load(telemetry=False, weather=False)
+        session.load(telemetry=False, weather=True)
         
         laps = session.laps
         if len(laps) == 0:
@@ -431,6 +431,7 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
         gaps = []
         tyre_ages = []
         pit_stops = []
+        compounds = []
         leader_time = None
         
         for _, lap in target_laps.iterrows():
@@ -466,6 +467,22 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
                 pit_stops.append(max(0, int(stint) - 1))
             else:
                 pit_stops.append(1)
+            
+            # Get tyre compound and normalize it
+            raw_compound = str(lap.get('Compound', 'MEDIUM')).upper()
+            if 'SOFT' in raw_compound:
+                normalized_compound = 'Soft'
+            elif 'MEDIUM' in raw_compound:
+                normalized_compound = 'Medium'
+            elif 'HARD' in raw_compound:
+                normalized_compound = 'Hard'
+            elif 'INTER' in raw_compound:
+                normalized_compound = 'Intermediate'
+            elif 'WET' in raw_compound:
+                normalized_compound = 'Wet'
+            else:
+                normalized_compound = 'Medium'
+            compounds.append(normalized_compound)
         
         # Fill in any missing drivers from GRID_2026 (DNF/not at this lap)
         dnfs = []
@@ -475,7 +492,37 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
                 gaps.append(0.0)
                 tyre_ages.append(0)
                 pit_stops.append(0)
+                compounds.append("Medium")
                 dnfs.append(d)
+        
+        # Extract live weather telemetry closest to target lap time
+        track_temp_live = 28.0
+        weather_condition_live = "Dry"
+        
+        try:
+            weather = session.weather_data
+            if len(weather) > 0 and len(target_laps) > 0:
+                target_time = target_laps.iloc[0]['Time']
+                time_deltas = (weather['Time'] - target_time).abs()
+                closest_idx = time_deltas.idxmin()
+                closest_w = weather.loc[closest_idx]
+                
+                track_temp_live = round(float(closest_w['TrackTemp']), 1)
+                rain_live = bool(closest_w['Rainfall'])
+                
+                if rain_live:
+                    leader_lap = target_laps.iloc[0]
+                    leader_compound = str(leader_lap.get('Compound', 'MEDIUM')).upper()
+                    if 'WET' in leader_compound:
+                        weather_condition_live = "Wet / Heavy Rain"
+                    elif 'INTER' in leader_compound:
+                        weather_condition_live = "Damp / Light Rain"
+                    else:
+                        weather_condition_live = "Damp / Light Rain"
+                else:
+                    weather_condition_live = "Dry"
+        except Exception:
+            pass
         
         if len(sorted_drivers) > 0:
             active_state = {
@@ -483,7 +530,10 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
                 "gaps": gaps,
                 "tyre_ages": tyre_ages,
                 "pit_stops": pit_stops,
+                "compounds": compounds,
                 "dnfs": dnfs,
+                "track_temp": track_temp_live,
+                "weather_condition": weather_condition_live,
                 "data_source": f"FastF1 Real Race Data (Lap {active_lap})"
             }
             return active_state
@@ -512,20 +562,27 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
                 
         tyre_ages = []
         pit_stops = []
+        compounds = []
         for d in sorted_drivers:
             if d in dnfs:
                 tyre_ages.append(0)
                 pit_stops.append(0)
+                compounds.append("Medium")
             else:
                 tyre_ages.append(np.random.randint(4, 12))
                 pit_stops.append(1)
+                # Assign some variety of dry compounds
+                compounds.append(np.random.choice(["Soft", "Medium", "Hard"], p=[0.2, 0.5, 0.3]))
                 
         active_state = {
             "sorted_drivers": sorted_drivers,
             "gaps": gaps,
             "tyre_ages": tyre_ages,
             "pit_stops": pit_stops,
+            "compounds": compounds,
             "dnfs": dnfs,
+            "track_temp": 24.0,
+            "weather_condition": "Dry",
             "data_source": "Simulated Fallback (GP Canada Lap 35)"
         }
         return active_state
@@ -550,20 +607,26 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
         # Tyre age and pit count states
         tyre_ages = []
         pit_stops = []
+        compounds = []
         for d in sorted_drivers:
             if d in dnfs:
                 tyre_ages.append(0)
                 pit_stops.append(0)
+                compounds.append("Medium")
             else:
                 tyre_ages.append(np.random.randint(8, 22))
                 pit_stops.append(1)
+                compounds.append(np.random.choice(["Soft", "Medium", "Hard"], p=[0.2, 0.5, 0.3]))
             
         active_state = {
             "sorted_drivers": sorted_drivers,
             "gaps": gaps,
             "tyre_ages": tyre_ages,
             "pit_stops": pit_stops,
+            "compounds": compounds,
             "dnfs": dnfs,
+            "track_temp": 28.0,
+            "weather_condition": "Dry",
             "data_source": "Simulated Fallback"
         }
         return active_state

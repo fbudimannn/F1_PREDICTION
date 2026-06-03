@@ -38,3 +38,7 @@ scratch/
 # data/constructor_pace_cache.json (Constructor pace cache)
 # data/qualifying_history_cache.json (Qualifying history cache)
 # data/historical/                 (training features & qualifying CSVs)
+
+# PRD documentation
+docs/prd/
+

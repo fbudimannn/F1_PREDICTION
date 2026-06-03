@@ -335,6 +335,9 @@ class MonteCarloSimulator:
         active_state: dict containing live race gaps, tyre ages if running live
         rain_intensity: float (0.0: Dry, 0.5: Damp, 1.0: Wet)
         """
+        # Copy tyre_strategies to prevent side effects/mutations on the caller's dictionary
+        tyre_strategies = {d: list(s) for d, s in tyre_strategies.items()}
+        
         num_drivers = len(starting_grid)
         total_laps = self.circuit_meta["laps"]
         
@@ -426,14 +429,33 @@ class MonteCarloSimulator:
         active_dnf = np.zeros((num_sims, num_drivers), dtype=bool) # True if driver has DNF'd
         
         if active_state is not None:
-            tyre_ages += np.array(active_state["tyre_ages"])
-            pit_stops += np.array(active_state["pit_stops"])
-            # Initialize tyre compounds to the index matching the number of pit stops completed
+            active_drivers = active_state.get("sorted_drivers", [])
+            
+            # 1. Adjust tyre strategies to start with the actual current compound
+            if "compounds" in active_state:
+                for idx, d in enumerate(starting_grid):
+                    if d in active_drivers:
+                        d_idx = active_drivers.index(d)
+                        curr_compound = active_state["compounds"][d_idx]
+                        pits = active_state["pit_stops"][d_idx]
+                        
+                        strat = list(tyre_strategies.get(d, ["Medium", "Hard"]))
+                        while len(strat) <= pits:
+                            strat.append("Hard")
+                        strat[pits] = curr_compound
+                        tyre_strategies[d] = strat
+                        
+            # 2. Initialize simulation arrays using matched driver keys
             for idx, d in enumerate(starting_grid):
-                pits = active_state["pit_stops"][idx]
-                strat = tyre_strategies.get(d, ["Medium", "Hard"])
-                tyre_compounds[:, idx] = np.clip(pits, 0, len(strat) - 1)
-                
+                if d in active_drivers:
+                    d_idx = active_drivers.index(d)
+                    tyre_ages[:, idx] = active_state["tyre_ages"][d_idx]
+                    pit_stops[:, idx] = active_state["pit_stops"][d_idx]
+                    
+                    pits = active_state["pit_stops"][d_idx]
+                    strat = tyre_strategies.get(d, ["Medium", "Hard"])
+                    tyre_compounds[:, idx] = np.clip(pits, 0, len(strat) - 1)
+                    
             if "dnfs" in active_state:
                 for dnf_driver in active_state["dnfs"]:
                     if dnf_driver in starting_grid:
