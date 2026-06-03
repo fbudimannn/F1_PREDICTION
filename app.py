@@ -358,7 +358,17 @@ else:
 is_live_mode = sim_mode != "Standard Pre-Race Predictor"
 active_state = None
 if is_live_mode:
-    active_state = fetch_live_session_timing(active_circuit, active_lap=mid_lap)
+    # Session-level cache to avoid repeating slow API/cache reads on every widget click/rerun.
+    # Resets completely when browser is refreshed.
+    if "live_timing_cache" not in st.session_state:
+        st.session_state.live_timing_cache = {}
+    
+    cache_key = f"{active_circuit}_{mid_lap}"
+    if cache_key in st.session_state.live_timing_cache:
+        active_state = st.session_state.live_timing_cache[cache_key]
+    else:
+        active_state = fetch_live_session_timing(active_circuit, active_lap=mid_lap)
+        st.session_state.live_timing_cache[cache_key] = active_state
 
 # Auto-Sync Strategy Dropdowns with Current Tyre on mode/lap changes
 current_sync_key = f"{active_circuit}_{mid_lap}" if is_live_mode else "pre-race"
