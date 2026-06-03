@@ -7,6 +7,19 @@ import os
 import json
 import time
 import base64
+import importlib
+
+# Force reload helper modules to prevent Streamlit Cloud from caching old files in memory
+import src.utils
+import src.data_ingestion
+import src.models
+import src.season_elo
+
+importlib.reload(src.utils)
+importlib.reload(src.data_ingestion)
+importlib.reload(src.models)
+importlib.reload(src.season_elo)
+
 from src.utils import GRID_2026, CIRCUITS, get_initial_driver_priors, update_elo_ratings, format_lap_time, get_driver_color
 from src.data_ingestion import fetch_gp_practice_data, fetch_live_session_timing, fetch_actual_qualifying_results, get_race_status
 from src.models import QualifyingModel, MonteCarloSimulator
