@@ -36,30 +36,30 @@ CIRCUIT_TO_GP_NAME = {
 # Official offline calendar database for the 2026 season to guarantee robust, 
 # zero-network fallback resolution on hosting servers (e.g. Streamlit Cloud)
 OFFICIAL_2026_CALENDAR = {
-    "australia": {"date": "2026-03-08", "name": "Australian Grand Prix"},
-    "china": {"date": "2026-03-15", "name": "Chinese Grand Prix"},
-    "japan": {"date": "2026-03-29", "name": "Japanese Grand Prix"},
-    "bahrain": {"date": "2026-04-12", "name": "Bahrain Grand Prix"},
-    "saudi_arabia": {"date": "2026-04-19", "name": "Saudi Arabian Grand Prix"},
-    "miami": {"date": "2026-05-03", "name": "Miami Grand Prix"},
-    "canada": {"date": "2026-05-24", "name": "Canadian Grand Prix"},
-    "monaco": {"date": "2026-06-07", "name": "Monaco Grand Prix"},
-    "barcelona": {"date": "2026-06-14", "name": "Spanish Grand Prix"},
-    "austria": {"date": "2026-06-28", "name": "Austrian Grand Prix"},
-    "great_britain": {"date": "2026-07-05", "name": "British Grand Prix"},
-    "belgium": {"date": "2026-07-19", "name": "Belgian Grand Prix"},
-    "hungary": {"date": "2026-07-26", "name": "Hungarian Grand Prix"},
-    "netherlands": {"date": "2026-08-23", "name": "Dutch Grand Prix"},
-    "italy": {"date": "2026-09-06", "name": "Italian Grand Prix"},
-    "spain_madrid": {"date": "2026-09-13", "name": "Spanish Grand Prix"},
-    "azerbaijan": {"date": "2026-09-27", "name": "Azerbaijan Grand Prix"},
-    "singapore": {"date": "2026-10-11", "name": "Singapore Grand Prix"},
-    "united_states": {"date": "2026-10-25", "name": "United States Grand Prix"},
-    "mexico": {"date": "2026-11-01", "name": "Mexico City Grand Prix"},
-    "brazil": {"date": "2026-11-08", "name": "São Paulo Grand Prix"},
-    "las_vegas": {"date": "2026-11-21", "name": "Las Vegas Grand Prix"},
-    "qatar": {"date": "2026-11-29", "name": "Qatar Grand Prix"},
-    "abu_dhabi": {"date": "2026-12-06", "name": "Abu Dhabi Grand Prix"}
+    "australia": {"date": "2026-03-08", "name": "Australian Grand Prix", "start_utc_hour": 5},
+    "china": {"date": "2026-03-15", "name": "Chinese Grand Prix", "start_utc_hour": 7},
+    "japan": {"date": "2026-03-29", "name": "Japanese Grand Prix", "start_utc_hour": 5},
+    "bahrain": {"date": "2026-04-12", "name": "Bahrain Grand Prix", "start_utc_hour": 15},
+    "saudi_arabia": {"date": "2026-04-19", "name": "Saudi Arabian Grand Prix", "start_utc_hour": 17},
+    "miami": {"date": "2026-05-03", "name": "Miami Grand Prix", "start_utc_hour": 20},
+    "canada": {"date": "2026-05-24", "name": "Canadian Grand Prix", "start_utc_hour": 18},
+    "monaco": {"date": "2026-06-07", "name": "Monaco Grand Prix", "start_utc_hour": 13},
+    "barcelona": {"date": "2026-06-14", "name": "Spanish Grand Prix", "start_utc_hour": 13},
+    "austria": {"date": "2026-06-28", "name": "Austrian Grand Prix", "start_utc_hour": 13},
+    "great_britain": {"date": "2026-07-05", "name": "British Grand Prix", "start_utc_hour": 14},
+    "belgium": {"date": "2026-07-19", "name": "Belgian Grand Prix", "start_utc_hour": 13},
+    "hungary": {"date": "2026-07-26", "name": "Hungarian Grand Prix", "start_utc_hour": 13},
+    "netherlands": {"date": "2026-08-23", "name": "Dutch Grand Prix", "start_utc_hour": 13},
+    "italy": {"date": "2026-09-06", "name": "Italian Grand Prix", "start_utc_hour": 13},
+    "spain_madrid": {"date": "2026-09-13", "name": "Spanish Grand Prix", "start_utc_hour": 13},
+    "azerbaijan": {"date": "2026-09-27", "name": "Azerbaijan Grand Prix", "start_utc_hour": 11},
+    "singapore": {"date": "2026-10-11", "name": "Singapore Grand Prix", "start_utc_hour": 12},
+    "united_states": {"date": "2026-10-25", "name": "United States Grand Prix", "start_utc_hour": 19},
+    "mexico": {"date": "2026-11-01", "name": "Mexico City Grand Prix", "start_utc_hour": 20},
+    "brazil": {"date": "2026-11-08", "name": "São Paulo Grand Prix", "start_utc_hour": 17},
+    "las_vegas": {"date": "2026-11-21", "name": "Las Vegas Grand Prix", "start_utc_hour": 6},
+    "qatar": {"date": "2026-11-29", "name": "Qatar Grand Prix", "start_utc_hour": 17},
+    "abu_dhabi": {"date": "2026-12-06", "name": "Abu Dhabi Grand Prix", "start_utc_hour": 13}
 }
 
 def get_race_status(circuit_id):
@@ -85,10 +85,31 @@ def get_race_status(circuit_id):
         # Parse official race Sunday date (UTC)
         event_date = datetime.strptime(event_date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
         
-        # Race typically starts ~14:00 local/UTC and lasts ~2 hours
-        race_start = event_date + timedelta(hours=14)
-        race_end = race_start + timedelta(hours=2, minutes=30)
+        # Default fallback start time based on specific circuit timezone offsets
+        start_hour = event_info.get("start_utc_hour", 14)
+        race_start = event_date + timedelta(hours=start_hour)
         
+        # Try dynamic lookup from FastF1 schedule to get the exact start time in UTC
+        try:
+            import fastf1
+            fastf1.Cache.enable_cache('fastf1_cache')
+            schedule = fastf1.get_event_schedule(2026)
+            event_row = schedule[schedule['EventName'].str.lower() == event_name.lower()]
+            if len(event_row) == 0:
+                first_word = event_name.split(' ')[0].lower()
+                event_row = schedule[schedule['EventName'].str.lower().str.contains(first_word, regex=False)]
+            
+            if len(event_row) > 0:
+                race_start_val = event_row.iloc[0]['Session5DateUtc']
+                if pd.notna(race_start_val):
+                    if isinstance(race_start_val, pd.Timestamp):
+                        race_start = race_start_val.to_pydatetime().replace(tzinfo=timezone.utc)
+                    else:
+                        race_start = pd.to_datetime(race_start_val).to_pydatetime().replace(tzinfo=timezone.utc)
+        except Exception:
+            pass
+            
+        race_end = race_start + timedelta(hours=2, minutes=30)
         now = datetime.now(timezone.utc)
         
         if now > race_end:
