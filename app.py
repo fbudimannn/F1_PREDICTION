@@ -322,6 +322,13 @@ def get_cached_race_status(circuit_id):
 
 race_status = get_cached_race_status(active_circuit)
 
+# Explicitly initialize sim_mode_sidebar based on race status if it is missing
+if "sim_mode_sidebar" not in st.session_state:
+    if race_status["status"] == "ONGOING":
+        st.session_state["sim_mode_sidebar"] = "🔴 Live Race Tracking"
+    else:
+        st.session_state["sim_mode_sidebar"] = "Standard Pre-Race Predictor"
+
 # Initialize session state variables for real-time live refresh
 if "refresh_interval" not in st.session_state:
     st.session_state.refresh_interval = 10
@@ -472,6 +479,12 @@ else:
 
 if "sim_mode_sidebar" in st.session_state and st.session_state["sim_mode_sidebar"] not in radio_options:
     del st.session_state["sim_mode_sidebar"]
+
+if "sim_mode_sidebar" not in st.session_state:
+    if race_status["status"] == "ONGOING":
+        st.session_state["sim_mode_sidebar"] = "🔴 Live Race Tracking"
+    else:
+        st.session_state["sim_mode_sidebar"] = "Standard Pre-Race Predictor"
 
 if race_status["status"] == "ONGOING":
     sim_mode = st.sidebar.radio(
@@ -705,14 +718,7 @@ if st.sidebar.button("Refresh Data & Clear Cache", help="Clears Streamlit cache 
     st.cache_data.clear()
     st.rerun()
 
-# Temporary debug logger UI in sidebar
-if os.path.exists("data/debug_log.txt"):
-    try:
-        with open("data/debug_log.txt", "r") as f:
-            log_lines = f.readlines()
-        st.sidebar.text_area("🔧 Internal Debug Logs", value="".join(log_lines[-25:]), height=200)
-    except Exception:
-        pass
+
 
 st.sidebar.markdown("---")
 credit_html = """
