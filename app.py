@@ -292,6 +292,16 @@ active_circuit = st.sidebar.selectbox(
 )
 circuit_data = CIRCUITS[active_circuit]
 
+# Track circuit changes to reset simulation mode widget state
+if "prev_circuit" not in st.session_state:
+    st.session_state.prev_circuit = active_circuit
+elif st.session_state.prev_circuit != active_circuit:
+    if "sim_mode_sidebar" in st.session_state:
+        del st.session_state["sim_mode_sidebar"]
+    if "mid_lap_sidebar" in st.session_state:
+        del st.session_state["mid_lap_sidebar"]
+    st.session_state.prev_circuit = active_circuit
+
 # Fetch race status for active circuit (DONE / ONGOING / SOON)
 # Always fetch fresh status (no caching) to ensure correct mode detection
 # This is critical: the top-level race_status drives ALL downstream behavior
@@ -391,6 +401,10 @@ def render_live_status_sidebar():
         if "live_timing_cache" in st.session_state:
             st.session_state.live_timing_cache.clear()
         st.cache_data.clear()
+        if "sim_mode_sidebar" in st.session_state:
+            del st.session_state["sim_mode_sidebar"]
+        if "mid_lap_sidebar" in st.session_state:
+            del st.session_state["mid_lap_sidebar"]
         if status_type == "ONGOING":
             st.toast(f"🟢 Race has started! Switching to LIVE mode...", icon="🏎️")
         elif status_type == "DONE":
@@ -434,17 +448,30 @@ else:
 sim_mode = "Standard Pre-Race Predictor"
 mid_lap = default_mid_lap
 
+# Guard against StreamlitAPIException: ensure session state has one of the active options
+if race_status["status"] == "ONGOING":
+    radio_options = ["🔴 Live Race Tracking", "Standard Pre-Race Predictor"]
+elif race_status["status"] == "DONE":
+    radio_options = ["Standard Pre-Race Predictor", "Replay Mid-Race State"]
+else:
+    radio_options = []
+
+if "sim_mode_sidebar" in st.session_state and st.session_state["sim_mode_sidebar"] not in radio_options:
+    del st.session_state["sim_mode_sidebar"]
+
 if race_status["status"] == "ONGOING":
     sim_mode = st.sidebar.radio(
         "Select Mode:", 
-        [f"🔴 Live Race Tracking (Lap {default_mid_lap})", "Standard Pre-Race Predictor"],
+        radio_options,
         help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Live Race Tracking simulates the remainder of the race from that exact lap forward.",
         key="sim_mode_sidebar"
     )
+    if sim_mode == "🔴 Live Race Tracking":
+        st.sidebar.caption(f"Currently tracking Live Race at **Lap {default_mid_lap}**")
 elif race_status["status"] == "DONE":
     sim_mode = st.sidebar.radio(
         "Select Mode:", 
-        ["Standard Pre-Race Predictor", "Replay Mid-Race State"],
+        radio_options,
         help="Standard Pre-Race Predictor simulates the race from the start line (Lap 0). Replay Mid-Race State allows you to select any completed lap via slider and run simulations from that lap forward.",
         key="sim_mode_sidebar"
     )
