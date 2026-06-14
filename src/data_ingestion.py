@@ -44,7 +44,7 @@ OFFICIAL_2026_CALENDAR = {
     "miami": {"date": "2026-05-03", "name": "Miami Grand Prix", "start_utc_hour": 20},
     "canada": {"date": "2026-05-24", "name": "Canadian Grand Prix", "start_utc_hour": 18},
     "monaco": {"date": "2026-06-07", "name": "Monaco Grand Prix", "start_utc_hour": 13},
-    "barcelona": {"date": "2026-06-14", "name": "Spanish Grand Prix", "start_utc_hour": 13},
+    "barcelona": {"date": "2026-06-14", "name": "Barcelona Grand Prix", "start_utc_hour": 13},
     "austria": {"date": "2026-06-28", "name": "Austrian Grand Prix", "start_utc_hour": 13},
     "great_britain": {"date": "2026-07-05", "name": "British Grand Prix", "start_utc_hour": 14},
     "belgium": {"date": "2026-07-19", "name": "Belgian Grand Prix", "start_utc_hour": 13},
@@ -99,13 +99,25 @@ def get_race_status(circuit_id):
                 first_word = event_name.split(' ')[0].lower()
                 event_row = schedule[schedule['EventName'].str.lower().str.contains(first_word, regex=False)]
             
+            # If multiple rows matched (e.g. two "Spanish Grand Prix" or similar),
+            # pick the one whose EventDate is closest to our offline calendar date
+            if len(event_row) > 1:
+                event_row['_date_diff'] = (pd.to_datetime(event_row['EventDate']) - pd.Timestamp(event_date_str)).abs()
+                event_row = event_row.sort_values('_date_diff').head(1)
+            
             if len(event_row) > 0:
                 race_start_val = event_row.iloc[0]['Session5DateUtc']
                 if pd.notna(race_start_val):
+                    candidate_start = None
                     if isinstance(race_start_val, pd.Timestamp):
-                        race_start = race_start_val.to_pydatetime().replace(tzinfo=timezone.utc)
+                        candidate_start = race_start_val.to_pydatetime().replace(tzinfo=timezone.utc)
                     else:
-                        race_start = pd.to_datetime(race_start_val).to_pydatetime().replace(tzinfo=timezone.utc)
+                        candidate_start = pd.to_datetime(race_start_val).to_pydatetime().replace(tzinfo=timezone.utc)
+                    
+                    # Safety: Only use FastF1's start time if it's within ±3 days of our calendar date
+                    # This prevents a wrong GP match from overriding our start time
+                    if candidate_start and abs((candidate_start - event_date).total_seconds()) < 3 * 86400:
+                        race_start = candidate_start
         except Exception:
             pass
             
