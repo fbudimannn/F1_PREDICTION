@@ -505,6 +505,27 @@ if is_live_mode:
         active_state = fetch_live_session_timing(active_circuit, active_lap=mid_lap)
         st.session_state.live_timing_cache[cache_key] = active_state
 
+# Apply live telemetry overrides if present in session state
+if is_live_mode and active_state is not None:
+    if "live_overrides" not in st.session_state:
+        st.session_state.live_overrides = {}
+    if active_circuit in st.session_state.live_overrides and st.session_state.live_overrides[active_circuit]:
+        active_state = active_state.copy()
+        active_state["compounds"] = list(active_state["compounds"])
+        active_state["tyre_ages"] = list(active_state["tyre_ages"])
+        active_state["pit_stops"] = list(active_state["pit_stops"])
+        
+        overrides = st.session_state.live_overrides[active_circuit]
+        for d, ov in overrides.items():
+            if d in active_state.get("sorted_drivers", []):
+                d_idx = active_state["sorted_drivers"].index(d)
+                if "compound" in ov:
+                    active_state["compounds"][d_idx] = ov["compound"]
+                if "age" in ov:
+                    active_state["tyre_ages"][d_idx] = ov["age"]
+                if "pit_stops" in ov:
+                    active_state["pit_stops"][d_idx] = ov["pit_stops"]
+
 # Auto-Sync Strategy Dropdowns with Current Tyre on mode/lap changes
 current_sync_key = f"{active_circuit}_{mid_lap}" if is_live_mode else "pre-race"
 if "last_synced_live_state" not in st.session_state:
@@ -973,6 +994,71 @@ with tab_race:
                     index=0,
                     help="Choose whether to build the race starting order using our LightGBM Machine Learning grid prediction (Bayesian Prior + FP3 Form) or Saturday's official qualifying classification from the FastF1 API."
                 )
+            
+            if is_live_mode and active_state is not None:
+                st.markdown("---")
+                with st.expander("🔧 Edit Live Telemetry Overrides", expanded=False):
+                    st.markdown("<small style='color: #8f9cae;'>Override live compounds, tyre ages, and pit stops if telemetry is delayed/wrong.</small>", unsafe_allow_html=True)
+                    
+                    if "live_overrides" not in st.session_state:
+                        st.session_state.live_overrides = {}
+                    if active_circuit not in st.session_state.live_overrides:
+                        st.session_state.live_overrides[active_circuit] = {}
+                        
+                    driver_to_edit = st.selectbox(
+                        "Select Driver to Override:",
+                        options=active_state.get("sorted_drivers", []),
+                        key="override_driver_select"
+                    )
+                    
+                    if driver_to_edit:
+                        d_idx = active_state["sorted_drivers"].index(driver_to_edit)
+                        curr_c = active_state["compounds"][d_idx]
+                        curr_age = active_state["tyre_ages"][d_idx]
+                        curr_pits = active_state["pit_stops"][d_idx]
+                        
+                        saved_overrides = st.session_state.live_overrides[active_circuit].get(driver_to_edit, {})
+                        val_c = saved_overrides.get("compound", curr_c)
+                        val_age = saved_overrides.get("age", curr_age)
+                        val_pits = saved_overrides.get("pit_stops", curr_pits)
+                        
+                        compound_options = ["Soft", "Medium", "Hard", "Intermediate", "Wet"]
+                        def_c_idx = compound_options.index(val_c) if val_c in compound_options else 1
+                        
+                        override_c = st.selectbox("Current Compound:", compound_options, index=def_c_idx, key="override_compound")
+                        override_age = st.number_input("Tyre Age (laps):", min_value=0, max_value=80, value=int(val_age), step=1, key="override_age")
+                        override_pits = st.number_input("Pit Stops Count:", min_value=0, max_value=5, value=int(val_pits), step=1, key="override_pit_stops")
+                        
+                        col_ov1, col_ov2 = st.columns(2)
+                        with col_ov1:
+                            if st.button("Apply Override", use_container_width=True, type="primary"):
+                                st.session_state.live_overrides[active_circuit][driver_to_edit] = {
+                                    "compound": override_c,
+                                    "age": override_age,
+                                    "pit_stops": override_pits
+                                }
+                                st.session_state.sim_results = None
+                                st.toast(f"✅ Applied override for {driver_to_edit}!", icon="🏎️")
+                                time.sleep(0.5)
+                                st.rerun()
+                        with col_ov2:
+                            if st.button("Reset Driver", use_container_width=True):
+                                if driver_to_edit in st.session_state.live_overrides[active_circuit]:
+                                    del st.session_state.live_overrides[active_circuit][driver_to_edit]
+                                st.session_state.sim_results = None
+                                st.toast(f"🔄 Reset overrides for {driver_to_edit} to live telemetry", icon="ℹ️")
+                                time.sleep(0.5)
+                                st.rerun()
+                                
+                    if st.session_state.live_overrides[active_circuit]:
+                        st.markdown("---")
+                        if st.button("Clear All Overrides", use_container_width=True):
+                            st.session_state.live_overrides[active_circuit].clear()
+                            st.session_state.sim_results = None
+                            st.toast("🔄 All overrides cleared!", icon="ℹ️")
+                            time.sleep(0.5)
+                            st.rerun()
+
             
     if is_live_mode and active_state is not None:
         curr_lap = mid_lap

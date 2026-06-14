@@ -441,9 +441,27 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
         if len(event_row) == 0:
             raise ValueError(f"GP {gp_name} is not in the FastF1 2026 calendar.")
             
-        session = fastf1.get_session(2026, gp_name, 'R')
-        session.load(telemetry=False, weather=True)
-        
+        session = None
+        loaded_year = 2026
+        try:
+            session = fastf1.get_session(2026, gp_name, 'R')
+            session.load(telemetry=False, weather=True)
+            loaded_year = 2026
+        except Exception:
+            try:
+                # Fallback to the latest completed season (2024) to get real representative GP data
+                session = fastf1.get_session(2024, gp_name, 'R')
+                session.load(telemetry=False, weather=True)
+                loaded_year = 2024
+            except Exception:
+                try:
+                    # Secondary fallback to 2023
+                    session = fastf1.get_session(2023, gp_name, 'R')
+                    session.load(telemetry=False, weather=True)
+                    loaded_year = 2023
+                except Exception as inner_e:
+                    raise inner_e
+            
         laps = session.laps
         if len(laps) == 0:
             raise ValueError("No lap data available for this race")
@@ -567,7 +585,7 @@ def fetch_live_session_timing(circuit_id, active_lap=35):
                 "dnfs": dnfs,
                 "track_temp": track_temp_live,
                 "weather_condition": weather_condition_live,
-                "data_source": f"FastF1 Real Race Data (Lap {active_lap})"
+                "data_source": f"FastF1 Real Race Data ({loaded_year} Replay, Lap {active_lap})"
             }
             return active_state
     
