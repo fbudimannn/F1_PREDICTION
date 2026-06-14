@@ -292,6 +292,15 @@ active_circuit = st.sidebar.selectbox(
 )
 circuit_data = CIRCUITS[active_circuit]
 
+# Debug logger helper
+def log_debug(msg):
+    with open("data/debug_log.txt", "a") as f:
+        f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg}\n")
+
+log_debug(f"START: circuit={active_circuit}, session_state_keys={list(st.session_state.keys())}")
+if "sim_mode_sidebar" in st.session_state:
+    log_debug(f"  sim_mode_sidebar in session state: {st.session_state['sim_mode_sidebar']}")
+
 # Track circuit changes to reset simulation mode widget state
 if "prev_circuit" not in st.session_state:
     st.session_state.prev_circuit = active_circuit
@@ -396,15 +405,19 @@ def render_live_status_sidebar():
     # This is CRITICAL: a full rerun updates the top-level race_status which
     # controls simulation mode, weather, tyre display, and monte carlo
     prev_status = st.session_state.last_seen_status.get(active_circuit)
+    log_debug(f"FRAGMENT CHECK: active_circuit={active_circuit}, prev_status={prev_status}, status_type={status_type}")
     if prev_status is not None and prev_status != status_type:
+        log_debug(f"TRANSITION DETECTED! Clearing session keys...")
         st.session_state.last_seen_status[active_circuit] = status_type
         if "live_timing_cache" in st.session_state:
             st.session_state.live_timing_cache.clear()
         st.cache_data.clear()
         if "sim_mode_sidebar" in st.session_state:
             del st.session_state["sim_mode_sidebar"]
+            log_debug("  Deleted sim_mode_sidebar")
         if "mid_lap_sidebar" in st.session_state:
             del st.session_state["mid_lap_sidebar"]
+            log_debug("  Deleted mid_lap_sidebar")
         if status_type == "ONGOING":
             st.toast(f"🟢 Race has started! Switching to LIVE mode...", icon="🏎️")
         elif status_type == "DONE":
@@ -690,6 +703,15 @@ if st.sidebar.button("Refresh Data & Clear Cache", help="Clears Streamlit cache 
     st.cache_resource.clear()
     st.cache_data.clear()
     st.rerun()
+
+# Temporary debug logger UI in sidebar
+if os.path.exists("data/debug_log.txt"):
+    try:
+        with open("data/debug_log.txt", "r") as f:
+            log_lines = f.readlines()
+        st.sidebar.text_area("🔧 Internal Debug Logs", value="".join(log_lines[-25:]), height=200)
+    except Exception:
+        pass
 
 st.sidebar.markdown("---")
 credit_html = """
