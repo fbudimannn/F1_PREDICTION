@@ -1063,7 +1063,6 @@ with tab_race:
                                 st.session_state.sim_results = None
                                 st.toast(f"✅ Applied override for {driver_to_edit}!", icon="🏎️")
                                 time.sleep(0.5)
-                                st.rerun()
                         with col_ov2:
                             if st.button("Reset Driver", use_container_width=True):
                                 if driver_to_edit in st.session_state.live_overrides[active_circuit]:
@@ -1071,7 +1070,6 @@ with tab_race:
                                 st.session_state.sim_results = None
                                 st.toast(f"🔄 Reset overrides for {driver_to_edit} to live telemetry", icon="ℹ️")
                                 time.sleep(0.5)
-                                st.rerun()
                                 
                     if st.session_state.live_overrides[active_circuit]:
                         st.markdown("---")
@@ -1080,7 +1078,6 @@ with tab_race:
                             st.session_state.sim_results = None
                             st.toast("🔄 All overrides cleared!", icon="ℹ️")
                             time.sleep(0.5)
-                            st.rerun()
 
             
     if is_live_mode and active_state is not None:
@@ -1170,10 +1167,8 @@ with tab_race:
                              st.session_state[f"strat_select_{d}"] = bulk_strat
                              if bulk_strat == "🔧 Custom Strategy...":
                                  st.session_state[f"strat_custom_{d}"] = applied_value
-                                 
                          st.toast(f"⚡ Bulk strategy '{applied_value}' applied successfully!", icon="✅")
-                         st.rerun()
-                         
+                                 
             st.markdown("<div style='margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;'></div>", unsafe_allow_html=True)
             
             # --- INDIVIDUAL DRIVER STRATEGIES ---
