@@ -21,7 +21,7 @@ importlib.reload(src.models)
 importlib.reload(src.season_elo)
 
 from src.utils import GRID_2026, CIRCUITS, get_initial_driver_priors, update_elo_ratings, format_lap_time, get_driver_color
-from src.data_ingestion import fetch_gp_practice_data, fetch_live_session_timing, fetch_actual_qualifying_results, get_race_status
+from src.data_ingestion import fetch_gp_practice_data, fetch_live_session_timing, fetch_actual_qualifying_results, get_race_status, OFFICIAL_2026_CALENDAR
 from src.models import QualifyingModel, MonteCarloSimulator
 from src.season_elo import compute_season_elo, compute_dynamic_constructor_pace
 
@@ -293,7 +293,9 @@ active_circuit = st.sidebar.selectbox(
 circuit_data = CIRCUITS[active_circuit]
 
 # Fetch race status for active circuit (DONE / ONGOING / SOON)
-# Lower TTL to 10 seconds to allow faster detection of status transitions
+# Always fetch fresh status (no caching) to ensure correct mode detection
+# This is critical: the top-level race_status drives ALL downstream behavior
+# (simulation mode, weather, monte carlo, tyre display)
 @st.cache_data(ttl=10)
 def get_cached_race_status(circuit_id):
     return get_race_status(circuit_id)
@@ -307,19 +309,34 @@ if "refresh_interval" not in st.session_state:
 if "last_seen_lap" not in st.session_state:
     st.session_state.last_seen_lap = {}
 
-# Display race status badge in sidebar (Dynamic Auto-Refresh via Fragment)
-refresh_time = st.session_state.refresh_interval if race_status["status"] == "ONGOING" else None
+if "last_seen_status" not in st.session_state:
+    st.session_state.last_seen_status = {}
 
+# Determine if we should auto-poll (race day detection)
+# Poll on race day even when SOON so we can detect SOON→ONGOING transition
+_is_race_day = False
+if active_circuit in OFFICIAL_2026_CALENDAR:
+    from datetime import date as _date_cls
+    _cal_date_str = OFFICIAL_2026_CALENDAR[active_circuit]["date"]
+    _is_race_day = _cal_date_str == str(_date_cls.today())
+
+if race_status["status"] == "ONGOING":
+    refresh_time = st.session_state.refresh_interval
+elif _is_race_day:
+    # On race day, poll every 30s to detect SOON→ONGOING transition
+    refresh_time = 30
+else:
+    refresh_time = None
+
+# Display race status badge in sidebar (Dynamic Auto-Refresh via Fragment)
 @st.fragment(run_every=refresh_time)
 def render_live_status_sidebar():
+    # ALWAYS bypass cache to get the freshest status possible
+    # This is essential for detecting SOON→ONGOING and ONGOING→DONE transitions
     try:
-        if race_status["status"] == "ONGOING":
-            # Bypass cache to fetch direct live data
-            current_status = get_race_status(active_circuit)
-        else:
-            current_status = get_cached_race_status(active_circuit)
+        current_status = get_race_status(active_circuit)
     except Exception:
-        current_status = race_status # fallback
+        current_status = race_status  # fallback to cached
         
     status_type = current_status.get("status", "SOON")
     new_lap = current_status.get("latest_lap")
@@ -363,8 +380,28 @@ def render_live_status_sidebar():
     else:
         st.markdown(f"<span class='badge-soon'>📅 UPCOMING</span>", unsafe_allow_html=True)
         st.markdown(f"<small style='color: #ffd740;'>Race Day: {current_status['event_date']}</small>", unsafe_allow_html=True)
+    
+    # === STATUS TRANSITION DETECTION ===
+    # Detect SOON→ONGOING or ONGOING→DONE transitions and trigger full page rerun
+    # This is CRITICAL: a full rerun updates the top-level race_status which
+    # controls simulation mode, weather, tyre display, and monte carlo
+    prev_status = st.session_state.last_seen_status.get(active_circuit)
+    if prev_status is not None and prev_status != status_type:
+        st.session_state.last_seen_status[active_circuit] = status_type
+        if "live_timing_cache" in st.session_state:
+            st.session_state.live_timing_cache.clear()
+        st.cache_data.clear()
+        if status_type == "ONGOING":
+            st.toast(f"🟢 Race has started! Switching to LIVE mode...", icon="🏎️")
+        elif status_type == "DONE":
+            st.toast(f"🏁 Race finished! Full data now available.", icon="🏆")
+        time.sleep(1)
+        st.rerun()
+    else:
+        st.session_state.last_seen_status[active_circuit] = status_type
         
-    # State-Change Detection: trigger full rerun only when lap actually changes
+    # === LAP CHANGE DETECTION (ONGOING only) ===
+    # Trigger full rerun when a new lap is detected to update live timing data
     if status_type == "ONGOING" and new_lap is not None:
         last_seen = st.session_state.last_seen_lap.get(active_circuit)
         if last_seen is None:
@@ -373,8 +410,9 @@ def render_live_status_sidebar():
             st.session_state.last_seen_lap[active_circuit] = new_lap
             if "live_timing_cache" in st.session_state:
                 st.session_state.live_timing_cache.clear()
+            st.cache_data.clear()
             st.toast(f"🟢 New Lap Detected: Lap {new_lap}! Updating standings...", icon="🏎️")
-            time.sleep(1) # short buffer for FastF1/openf1 data ingestion sync
+            time.sleep(1)
             st.rerun()
 
 # Call the fragment inside the sidebar context
