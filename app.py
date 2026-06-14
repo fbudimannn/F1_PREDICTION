@@ -324,15 +324,15 @@ def render_live_status_sidebar():
     status_type = current_status.get("status", "SOON")
     new_lap = current_status.get("latest_lap")
     
-    st.sidebar.markdown("---")
+    st.markdown("---")
     if status_type == "DONE":
-        st.sidebar.markdown(f"<span class='badge-done'>✅ RACE COMPLETED</span>", unsafe_allow_html=True)
-        st.sidebar.markdown(f"<small style='color: #8f9cae;'>Finished on {current_status['event_date']} — Full data available ({new_lap}/{current_status['total_laps']} laps)</small>", unsafe_allow_html=True)
+        st.markdown(f"<span class='badge-done'>✅ RACE COMPLETED</span>", unsafe_allow_html=True)
+        st.markdown(f"<small style='color: #8f9cae;'>Finished on {current_status['event_date']} — Full data available ({new_lap}/{current_status['total_laps']} laps)</small>", unsafe_allow_html=True)
     elif status_type == "ONGOING":
-        st.sidebar.markdown(f"<span class='badge-ongoing'>🔴 LIVE — LAP {new_lap}/{current_status['total_laps']}</span>", unsafe_allow_html=True)
+        st.markdown(f"<span class='badge-ongoing'>🔴 LIVE — LAP {new_lap}/{current_status['total_laps']}</span>", unsafe_allow_html=True)
         
         # Add refresh rate control inside the fragment so the user can change it
-        col_ref1, col_ref2 = st.sidebar.columns([2, 1])
+        col_ref1, col_ref2 = st.columns([2, 1])
         with col_ref1:
             options = {"5s": 5, "10s": 10, "30s": 30, "60s": 60, "Manual": 999999}
             curr_val = st.session_state.refresh_interval
@@ -357,12 +357,12 @@ def render_live_status_sidebar():
             st.rerun()
             
         if new_interval == 999999:
-            st.sidebar.markdown(f"<small style='color: #ff5252;'>Auto-refresh paused. Click 'Now' to sync.</small>", unsafe_allow_html=True)
+            st.markdown(f"<small style='color: #ff5252;'>Auto-refresh paused. Click 'Now' to sync.</small>", unsafe_allow_html=True)
         else:
-            st.sidebar.markdown(f"<small style='color: #ff5252;'>Race in progress — Auto-syncing every {selected_ref}</small>", unsafe_allow_html=True)
+            st.markdown(f"<small style='color: #ff5252;'>Race in progress — Auto-syncing every {selected_ref}</small>", unsafe_allow_html=True)
     else:
-        st.sidebar.markdown(f"<span class='badge-soon'>📅 UPCOMING</span>", unsafe_allow_html=True)
-        st.sidebar.markdown(f"<small style='color: #ffd740;'>Race Day: {current_status['event_date']}</small>", unsafe_allow_html=True)
+        st.markdown(f"<span class='badge-soon'>📅 UPCOMING</span>", unsafe_allow_html=True)
+        st.markdown(f"<small style='color: #ffd740;'>Race Day: {current_status['event_date']}</small>", unsafe_allow_html=True)
         
     # State-Change Detection: trigger full rerun only when lap actually changes
     if status_type == "ONGOING" and new_lap is not None:
@@ -377,7 +377,9 @@ def render_live_status_sidebar():
             time.sleep(1) # short buffer for FastF1/openf1 data ingestion sync
             st.rerun()
 
-render_live_status_sidebar()
+# Call the fragment inside the sidebar context
+with st.sidebar:
+    render_live_status_sidebar()
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### ⚙️ Simulation Mode")
