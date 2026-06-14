@@ -293,23 +293,91 @@ active_circuit = st.sidebar.selectbox(
 circuit_data = CIRCUITS[active_circuit]
 
 # Fetch race status for active circuit (DONE / ONGOING / SOON)
-@st.cache_data(ttl=30)
+# Lower TTL to 10 seconds to allow faster detection of status transitions
+@st.cache_data(ttl=10)
 def get_cached_race_status(circuit_id):
     return get_race_status(circuit_id)
 
 race_status = get_cached_race_status(active_circuit)
 
-# Display race status badge in sidebar
-st.sidebar.markdown("---")
-if race_status["status"] == "DONE":
-    st.sidebar.markdown(f"<span class='badge-done'>✅ RACE COMPLETED</span>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<small style='color: #8f9cae;'>Finished on {race_status['event_date']} — Full data available ({race_status['latest_lap']}/{race_status['total_laps']} laps)</small>", unsafe_allow_html=True)
-elif race_status["status"] == "ONGOING":
-    st.sidebar.markdown(f"<span class='badge-ongoing'>🔴 LIVE — LAP {race_status['latest_lap']}/{race_status['total_laps']}</span>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<small style='color: #ff5252;'>Race in progress — Auto-refreshing every 30s</small>", unsafe_allow_html=True)
-else:
-    st.sidebar.markdown(f"<span class='badge-soon'>📅 UPCOMING</span>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<small style='color: #ffd740;'>Race Day: {race_status['event_date']}</small>", unsafe_allow_html=True)
+# Initialize session state variables for real-time live refresh
+if "refresh_interval" not in st.session_state:
+    st.session_state.refresh_interval = 10
+
+if "last_seen_lap" not in st.session_state:
+    st.session_state.last_seen_lap = {}
+
+# Display race status badge in sidebar (Dynamic Auto-Refresh via Fragment)
+refresh_time = st.session_state.refresh_interval if race_status["status"] == "ONGOING" else None
+
+@st.fragment(run_every=refresh_time)
+def render_live_status_sidebar():
+    try:
+        if race_status["status"] == "ONGOING":
+            # Bypass cache to fetch direct live data
+            current_status = get_race_status(active_circuit)
+        else:
+            current_status = get_cached_race_status(active_circuit)
+    except Exception:
+        current_status = race_status # fallback
+        
+    status_type = current_status.get("status", "SOON")
+    new_lap = current_status.get("latest_lap")
+    
+    st.sidebar.markdown("---")
+    if status_type == "DONE":
+        st.sidebar.markdown(f"<span class='badge-done'>✅ RACE COMPLETED</span>", unsafe_allow_html=True)
+        st.sidebar.markdown(f"<small style='color: #8f9cae;'>Finished on {current_status['event_date']} — Full data available ({new_lap}/{current_status['total_laps']} laps)</small>", unsafe_allow_html=True)
+    elif status_type == "ONGOING":
+        st.sidebar.markdown(f"<span class='badge-ongoing'>🔴 LIVE — LAP {new_lap}/{current_status['total_laps']}</span>", unsafe_allow_html=True)
+        
+        # Add refresh rate control inside the fragment so the user can change it
+        col_ref1, col_ref2 = st.sidebar.columns([2, 1])
+        with col_ref1:
+            options = {"5s": 5, "10s": 10, "30s": 30, "60s": 60, "Manual": 999999}
+            curr_val = st.session_state.refresh_interval
+            default_idx = list(options.values()).index(curr_val) if curr_val in options.values() else 1
+            selected_ref = st.selectbox(
+                "Refresh Rate:",
+                options=list(options.keys()),
+                index=default_idx,
+                key="live_refresh_rate_select",
+                label_visibility="collapsed"
+            )
+            new_interval = options[selected_ref]
+        with col_ref2:
+            if st.button("🔄 Now", help="Force refresh now", use_container_width=True):
+                if "live_timing_cache" in st.session_state:
+                    st.session_state.live_timing_cache.clear()
+                st.cache_data.clear()
+                st.rerun()
+                
+        if new_interval != st.session_state.refresh_interval:
+            st.session_state.refresh_interval = new_interval
+            st.rerun()
+            
+        if new_interval == 999999:
+            st.sidebar.markdown(f"<small style='color: #ff5252;'>Auto-refresh paused. Click 'Now' to sync.</small>", unsafe_allow_html=True)
+        else:
+            st.sidebar.markdown(f"<small style='color: #ff5252;'>Race in progress — Auto-syncing every {selected_ref}</small>", unsafe_allow_html=True)
+    else:
+        st.sidebar.markdown(f"<span class='badge-soon'>📅 UPCOMING</span>", unsafe_allow_html=True)
+        st.sidebar.markdown(f"<small style='color: #ffd740;'>Race Day: {current_status['event_date']}</small>", unsafe_allow_html=True)
+        
+    # State-Change Detection: trigger full rerun only when lap actually changes
+    if status_type == "ONGOING" and new_lap is not None:
+        last_seen = st.session_state.last_seen_lap.get(active_circuit)
+        if last_seen is None:
+            st.session_state.last_seen_lap[active_circuit] = new_lap
+        elif new_lap != last_seen:
+            st.session_state.last_seen_lap[active_circuit] = new_lap
+            if "live_timing_cache" in st.session_state:
+                st.session_state.live_timing_cache.clear()
+            st.toast(f"🟢 New Lap Detected: Lap {new_lap}! Updating standings...", icon="🏎️")
+            time.sleep(1) # short buffer for FastF1/openf1 data ingestion sync
+            st.rerun()
+
+render_live_status_sidebar()
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### ⚙️ Simulation Mode")
@@ -1273,19 +1341,9 @@ with tab_race:
         hide_index=True
     )
 
-# 7. Live Race Auto-Refresh (ONGOING status only)
-if race_status["status"] == "ONGOING":
-    if "last_refresh" not in st.session_state:
-        st.session_state.last_refresh = time.time()
-        
-    @st.fragment(run_every=30)
-    def live_auto_refresh():
-        # Check if 30 seconds (with a minor 2s buffer) have elapsed since the last full page load
-        if time.time() - st.session_state.last_refresh >= 28:
-            st.session_state.last_refresh = time.time()
-            st.rerun()
-            
-    live_auto_refresh()
+# 7. Live Race Auto-Refresh (Handled in sidebar status fragment)
+# This is now handled dynamically in the sidebar status badge fragment to prevent redundant loads.
+pass
 
 # 8. F1 Soundtrack — Background Music Player (Sidebar)
 # Placed in the sidebar because Streamlit's main content area has
